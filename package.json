@@ -1,7 +1,7 @@
 {
-  "name": "boilerplate-card",
+  "name": "midea-dehumidifier-card",
   "version": "1.4.1",
-  "description": "Lovelace boilerplate-card",
+  "description": "Lovelace midea-dehumidifier-card",
   "keywords": [
     "home-assistant",
     "homeassistant",
@@ -10,14 +10,16 @@
     "lovelace",
     "custom-cards"
   ],
-  "module": "boilerplate-card.js",
-  "repository": "git@github.com:custom_cards/boilerplate-card.git",
-  "author": "Ian Richardson <iantrich@gmail.com>",
+  "module": "midea-dehumidifier-card.js",
+  "repository": "git@github.com:sicknesz/midea-dehumidifier-card.git",
+  "author": "Sylain Roccaserra (sicknesz) <roccaserra.sylvain@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "custom-card-helpers": "^1.7.2",
     "home-assistant-js-websocket": "^5.11.1",
-    "lit": "^2.0.0-rc.2"
+    "lit": "^2.0.0-rc.2",
+    "@mdi/js": "^6.5.95",
+    "@thomasloven/round-slider": "^0.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",

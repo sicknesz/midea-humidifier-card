@@ -1,0 +1,8 @@
+{
+  "common": {
+    "version": "Version",
+    "invalid_configuration": "Configuration invalide",
+    "show_warning": "Attention : ",
+    "show_error": "Erreur : "
+  }
+}

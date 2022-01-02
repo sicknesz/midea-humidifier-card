@@ -1,8 +1,152 @@
+/*
+import "@polymer/paper-input/paper-input";
+import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
+import { customElement, property, state } from "lit/decorators";
+import { assert, assign, object, optional, string } from "superstruct";
+import { fireEvent } from "../../../../common/dom/fire_event";
+import "../../../../components/entity/ha-entity-picker";
+import { HomeAssistant } from "../../../../types";
+import { HumidifierCardConfig } from "../../cards/types";
+import "../../components/hui-theme-select-editor";
+import { LovelaceCardEditor } from "../../types";
+import { baseLovelaceCardConfig } from "../structs/base-card-struct";
+import { EditorTarget, EntitiesEditorEvent } from "../types";
+import { configElementStyle } from "./config-elements-style";
+
+const cardConfigStruct = assign(
+  baseLovelaceCardConfig,
+  object({
+    entity: optional(string()),
+    name: optional(string()),
+    theme: optional(string()),
+  })
+);
+
+const includeDomains = ["humidifier"];
+
+@customElement("hui-humidifier-card-editor")
+export class HuiHumidifierCardEditor
+  extends LitElement
+  implements LovelaceCardEditor
+{
+  @property({ attribute: false }) public hass?: HomeAssistant;
+
+  @state() private _config?: HumidifierCardConfig;
+
+  public setConfig(config: HumidifierCardConfig): void {
+    assert(config, cardConfigStruct);
+    this._config = config;
+  }
+
+  get _entity(): string {
+    return this._config!.entity || "";
+  }
+
+  get _name(): string {
+    return this._config!.name || "";
+  }
+
+  get _theme(): string {
+    return this._config!.theme || "";
+  }
+
+  protected render(): TemplateResult {
+    if (!this.hass || !this._config) {
+      return html``;
+    }
+
+    return html`
+      <div class="card-config">
+        <ha-entity-picker
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.entity"
+          )} (${this.hass.localize(
+            "ui.panel.lovelace.editor.card.config.required"
+          )})"
+          .hass=${this.hass}
+          .value=${this._entity}
+          .configValue=${"entity"}
+          .includeDomains=${includeDomains}
+          @change=${this._valueChanged}
+          allow-custom-entity
+        ></ha-entity-picker>
+        <paper-input
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.name"
+          )} (${this.hass.localize(
+            "ui.panel.lovelace.editor.card.config.optional"
+          )})"
+          .value=${this._name}
+          .configValue=${"name"}
+          @value-changed=${this._valueChanged}
+        ></paper-input>
+        <hui-theme-select-editor
+          .hass=${this.hass}
+          .value=${this._theme}
+          .configValue=${"theme"}
+          @value-changed=${this._valueChanged}
+        ></hui-theme-select-editor>
+      </div>
+    `;
+  }
+
+  private _valueChanged(ev: EntitiesEditorEvent): void {
+    if (!this._config || !this.hass) {
+      return;
+    }
+    const target = ev.target! as EditorTarget;
+
+    if (this[`_${target.configValue}`] === target.value) {
+      return;
+    }
+    if (target.configValue) {
+      if (target.value === "") {
+        this._config = { ...this._config };
+        delete this._config[target.configValue!];
+      } else {
+        this._config = { ...this._config, [target.configValue!]: target.value };
+      }
+    }
+    fireEvent(this, "config-changed", { config: this._config });
+  }
+
+  static get styles(): CSSResultGroup {
+    return configElementStyle;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "hui-humidifier-card-editor": HuiHumidifierCardEditor;
+  }
+}
+*/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
-import { HomeAssistant, fireEvent, LovelaceCardEditor, ActionConfig } from 'custom-card-helpers';
+import { HomeAssistant, fireEvent, ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
 
-import { BoilerplateCardConfig } from './types';
+// import { BoilerplateCardConfig } from './types';
+declare global {
+  interface HTMLElementTagNameMap {
+    'boilerplate-card-editor': LovelaceCardEditor;
+    'hui-error-card': LovelaceCard;
+  }
+}
+
+// TODO Add your configuration elements here for type-checking
+export interface BoilerplateCardConfig extends LovelaceCardConfig {
+  type: string;
+  name?: string;
+  show_warning?: boolean;
+  show_error?: boolean;
+  test_gui?: boolean;
+  entity?: string;
+  tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
+}
+
+
 import { customElement, property, state } from 'lit/decorators';
 
 const options = {
@@ -46,7 +190,7 @@ const options = {
   },
 };
 
-@customElement('boilerplate-card-editor')
+@customElement('hui-humidifier-card-card-editor')
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: BoilerplateCardConfig;
