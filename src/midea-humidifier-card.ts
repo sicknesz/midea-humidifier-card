@@ -347,7 +347,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         @click=${this._handlePowerAction}
         tabindex="0"
         .path=${powerIcons[this._lower(currentPowerStatus)]}
-        .label=${currentPowerStatus}
+        .label=${this._lower(currentPowerStatus)}
       >
       </ha-icon-button>
     `;
@@ -370,7 +370,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         @click=${this._handleFanAction}
         tabindex="0"
         .path=${fanModeIcons[this._lower(fanMode)]}
-        .label=${fanMode}
+        .label=${this._lower(fanMode)}
       >
       </ha-icon-button>
     `;
@@ -391,7 +391,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         @click=${this._handleAction}
         tabindex="0"
         .path=${modeIcons[this._lower(mode)]}
-        .label=${mode}
+        .label=${this._lower(mode)}
       >
       </ha-icon-button>
     `;
@@ -423,15 +423,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   }
 
   private _getPrimaryText(hasProblems: boolean, name: string): string {
-    return hasProblems ? "Tank is full !" : name
-  }
-
-  private getProblems(hasProblems: boolean, name: string) : TemplateResult {
-    return html`
-      <hui-warning>
-        ${this._getPrimaryText(hasProblems, name)}
-      </hui-warning>
-    `
+    return hasProblems ? /* this.hass!.localize("tank_is_full") */"Tank is full !" : name
   }
 
   protected render(): TemplateResult {
@@ -568,13 +560,14 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     </svg>
     `;
 
-    // Fix this shit ...
+
+    // Fix this sh.t code ...    
     const hasProblems = tankStateObj.state === 'on'
     if (hasProblems) {
       const { attributes: { preset_modes: [one, two, three] } } = fanStateObj
       fanStateObj.attributes.preset_modes = [one, two, three, "tank"]
-      currentFanMode = "Tank"
-      currentMode= "Tank"
+      currentFanMode = "tank"
+      currentMode= "tank"
     } else {
       const { attributes: { preset_modes: [one, two, three] } } = fanStateObj
       fanStateObj.attributes.preset_modes = [one, two, three]
@@ -588,9 +581,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       >
         <ha-icon-button
           class="more-info"
-          .label=${this.hass!.localize(
-      "ui.panel.lovelace.cards.show_more_info"
-    )}
+          .label=${this.hass!.localize("ui.panel.lovelace.cards.show_more_info")}
           .path=${mdiDotsVertical}
           @click=${this._handleMoreInfo}
           tabindex="0"
@@ -770,7 +761,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       .unknown-mode {
         --mode-color: var(--state-unknown-color);
       }
-      .Tank {
+      .tank {
         --mode-color: var(--error-color);
       }
 

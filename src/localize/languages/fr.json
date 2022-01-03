@@ -2,7 +2,8 @@
   "common": {
     "version": "Version",
     "invalid_configuration": "Configuration invalide",
-    "show_warning": "Attention : ",
-    "show_error": "Erreur : "
+    "tank_is_full": "Attention : Le réservoir est plein",
+    "change_airfilter": "Attention : Changer le filtre à air",
+    "defrosting": "Attention : Dégivrage en cours..."
   }
 }

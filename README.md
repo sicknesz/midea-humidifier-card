@@ -1,6 +1,21 @@
-# Boilerplate Card by [@iantrich](https://www.github.com/iantrich)
+# Midea Humidifier Card by [@sicknesz](https://www.github.com/sicknesz)
 
-A community driven boilerplate of best practices for Home Assistant Lovelace custom cards
+A companion card to the Midea Humidifier Lan integration that added tons of options comparing to previous integrations, so much that the classic
+humidifier card was kinda lacking alot, so i made this card specifically for that (Midea/Inventor EVA Pro (De)Humifidier Appliances)
+
+## Here's whats currently working
+
+1. Control of all applicances mode (Set, Smart, Continuous, Dry)
+2. Control the 3 preset mode for the fan (Silent, Medium, Turbo)
+3. Warn user when tank is full
+
+## TODO
+
+1. add a toggle ion icon button
+2. add the 2 others possible cause of warning (defrosting, air filter need to be changed)
+3. Fix the cards editor
+
+![Screenshot #1](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/image.jpg?raw=true>
 
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE.md)
@@ -22,28 +37,21 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 
 | Name              | Type    | Requirement  | Description                                 | Default             |
 | ----------------- | ------- | ------------ | ------------------------------------------- | ------------------- |
-| type              | string  | **Required** | `custom:boilerplate-card`                   |
-| name              | string  | **Optional** | Card name                                   | `Boilerplate`       |
-| show_error        | boolean | **Optional** | Show what an error looks like for the card  | `false`             |
-| show_warning      | boolean | **Optional** | Show what a warning looks like for the card | `false`             |
-| entity            | string  | **Optional** | Home Assistant entity ID.                   | `none`              |
-| tap_action        | object  | **Optional** | Action to take on tap                       | `action: more-info` |
-| hold_action       | object  | **Optional** | Action to take on hold                      | `none`              |
-| double_tap_action | object  | **Optional** | Action to take on double tap                | `none`              |
+| type              | string  | **Required** | `custom:midea-humidifier-card`                   |
+| name               | string  | **Optional** | Card name                                   | `Midea Humidifier`  |
+| entity             | string  | **Required** | Humidifier entity ID.                       | `humidifier.<id>`   |
+| fan_entity         | string  | **Optional** | Humidifiers fan entity ID.                  | `fan.<id>`          |
+| humidity_entity    | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| temperature_entity | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| tank_entity        | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| entities(*)        | array   | **Required** | All entities used in the card.              | `sensor.<id>`       |
 
-## Action Options
+* : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
+for this I use the helper function called `hasConfigOrEntitiesChanged` thats present in the frontend code but not as helper,
+I re-implemented it because the card uses it to know if **any** entities has changed meaning that without it clicking on a fan's speed would
+not update the UI until an action was taken on the main entity, so the yaml for this card is a bit longer that usual but it does the tricks
 
-| Name            | Type   | Requirement  | Description                                                                                                                            | Default     |
-| --------------- | ------ | ------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| action          | string | **Required** | Action to perform (more-info, toggle, call-service, navigate url, none)                                                                | `more-info` |
-| navigation_path | string | **Optional** | Path to navigate to (e.g. /lovelace/0/) when action defined as navigate                                                                | `none`      |
-| url             | string | **Optional** | URL to open on click when action is url. The URL will open in a new tab                                                                | `none`      |
-| service         | string | **Optional** | Service to call (e.g. media_player.media_play_pause) when action defined as call-service                                               | `none`      |
-| service_data    | object | **Optional** | Service data to include (e.g. entity_id: media_player.bedroom) when action defined as call-service                                     | `none`      |
-| haptic          | string | **Optional** | Haptic feedback _success, warning, failure, light, medium, heavy, selection_ | `none`      |
-| repeat          | number | **Optional** | How often to repeat the `hold_action` in milliseconds.                                                                                 | `none`       |
-
-## Starting a new card from boilerplate-card
+## Starting a new card from midea-humidifier-card
 
 ### Step 1
 
@@ -67,53 +75,14 @@ Search the repository for all instances of "TODO" and handle the changes/suggest
 
 Customize to suit your needs and contribute it back to the community
 
-## Starting a new card from boilerplate-card with [devcontainer][devcontainer]
-
-Note: this is available only in vscode ensure you have the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed.
-
-1. Fork and clone the repository.
-2. Open a [devcontainer][devcontainer] terminal and run `npm start` when it's ready.
-3. The compiled `.js` file will be accessible on
-   `http://127.0.0.1:5000/boilerplate-card.js`.
-4. On a running Home Assistant installation add this to your Lovelace
-   `resources:`
-
-```yaml
-- url: 'http://127.0.0.1:5000/boilerplate-card.js'
-  type: module
-```
-
-_Change "127.0.0.1" to the IP of your development machine._
-
-### Bonus
-
-If you need a fresh test instance you can install a fresh Home Assistant instance inside the devcontainer as well.
-
-1. Run the command `container start`.
-2. Home Assistant will install and will eventually be running on port `9123`
-
-## [Troubleshooting](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins)
-
-NB This will not work with node 9.x if you see the following errors try installing node 8.10.0
-
-```yarn install
-yarn install v1.3.2
-[1/4] 🔍  Resolving packages...
-warning rollup-plugin-commonjs@10.1.0: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-commonjs.
-[2/4] 🚚  Fetching packages...
-error @typescript-eslint/eslint-plugin@2.6.0: The engine "node" is incompatible with this module. Expected version "^8.10.0 || ^10.13.0 || >=11.10.1".
-error Found incompatible module
-info Visit https://yarnpkg.com/en/docs/cli/install for documentation about this command.
-```
-
-[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-cards/boilerplate-card.svg?style=for-the-badge
-[commits]: https://github.com/custom-cards/boilerplate-card/commits/master
+[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-cards/midea-humidifier-card.svg?style=for-the-badge
+[commits]: https://github.com/sicknesz/midea-humidifier-card/commits/master
 [devcontainer]: https://code.visualstudio.com/docs/remote/containers
 [discord]: https://discord.gg/5e9yvq
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/c/projects/frontend
-[license-shield]: https://img.shields.io/github/license/custom-cards/boilerplate-card.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/custom-cards/midea-humidifier-card.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/custom-cards/boilerplate-card.svg?style=for-the-badge
-[releases]: https://github.com/custom-cards/boilerplate-card/releases
+[releases-shield]: https://img.shields.io/github/release/custom-cards/midea-humidifier-card.svg?style=for-the-badge
+[releases]: https://github.com/sicknesz/midea-humidifier-card/releases

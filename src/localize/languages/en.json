@@ -2,7 +2,8 @@
   "common": {
     "version": "Version",
     "invalid_configuration": "Invalid configuration",
-    "show_warning": "Show Warning",
-    "show_error": "Show Error"
+    "tank_is_full": "Caution : Water tank is full, please empty it",
+    "change_airfilter": "Caution : Please change the air filter",
+    "defrosting": "Caution : Please wait, currently defrosting..."
   }
 }
