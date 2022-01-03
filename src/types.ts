@@ -12,10 +12,18 @@ export interface HumidifierCardConfig extends LovelaceCardConfig {
   entity: string;
   fan_entity: string;
   tank_entity: string;
+  defrost_entity: string;
+  filter_entity: string;
   humidity_entity: string;
   temperature_entity: string;
   theme?: string;
   name?: string;
+}
+
+export interface ProblemConfig {
+  tank: boolean;
+  defrost: boolean;
+  filter: boolean;
 }
 
 export const TIMESTAMP_RENDERING_FORMATS = [
