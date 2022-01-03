@@ -12,7 +12,8 @@ import {
   mdiFanSpeed2,
   mdiFanSpeed3,
   mdiAlertCircle,
-  mdiPower
+  mdiPower,
+  mdiPowerCycle
 } from "@mdi/js";
 // import "@thomasloven/round-slider";
 import { HassEntity, STATE_NOT_RUNNING } from "home-assistant-js-websocket";
@@ -51,11 +52,7 @@ import {
 
 import { LovelaceRowConfig, HumidifierCardConfig } from "./types"
 
-// import "../../../components/ha-card";
-// import "../../../components/ha-icon-button";
-
-// Re-imported stuff from original humidifier card into custom boilerplate code
-
+// Re-imported stuff from original humidifier card into custom card
 const arrayFilter = (
   array: any[],
   conditions: Array<(value: any) => boolean>,
@@ -237,20 +234,6 @@ const createEntityNotFoundWarning = (
       )
     : hass.localize("ui.panel.lovelace.warning.starting");
 
-// @customElement("hui-warning")
-// export class HuiWarning extends LitElement {
-//   protected render(): TemplateResult {
-//     return html`<ha-alert alert-type="warning"><slot></slot></ha-alert> `;
-//   }
-// }
-
-// declare global {
-//   interface HTMLElementTagNameMap {
-//     "hui-warning": HuiWarning;
-//   }
-// }
-
-
 const UNAVAILABLE = "unavailable";
 const UNKNOWN = "unknown";
 const UNAVAILABLE_STATES = [UNAVAILABLE, UNKNOWN];
@@ -265,7 +248,7 @@ const modeIcons: { [mode in HumidifierMode]: string } = {
 
 const powerIcons: { [status in PowerStatus]: string } = {
   off: mdiPower,
-  on:  /* mdiPowerCycle */ mdiPower, // colored version
+  on:  mdiPowerCycle /* mdiPower*/, // colored version
 };
 
 const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
@@ -276,7 +259,7 @@ const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
 }
 
 const CARD_NAME = "midea-humidifier-card"
-const version = "1.0.0"
+const version = "1.0.1"
 
 console.info(`%c${CARD_NAME}: ${version}`, 'font-weight: bold');
 (window as any).customCards = (window as any).customCards || [];
@@ -343,40 +326,23 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     this._helpers = await (window as any).loadCardHelpers();
   }  
 
-  private _renderFanIcon(fanMode: string, currentFanMode: string | undefined): TemplateResult {
-
-    const isSelected = !!(currentFanMode === fanMode)
-    console.info(`[Humidifier-card]: fan icon : render : ${fanMode} current : ${currentFanMode} isSelected: ${isSelected}`)
-
-    if (!fanModeIcons[this._lower(fanMode)]) {
-      console.info("[Humidifier-card]: no fan icon found, no html")
-      return html``;
-    }
-    return html`
-      <ha-icon-button
-        class=${classMap({ "selected-icon": isSelected })}
-        .mode=${fanMode}
-        @click=${this._handleFanAction}
-        tabindex="0"
-        .path=${fanModeIcons[this._lower(fanMode)]}
-        .label=${fanMode}
-      >
-      </ha-icon-button>
-    `;
-  }
-
   private _lower(string: string) {
     return string?.toLowerCase()
   }
 
-  private _renderPowerIcon(currentPowerStatus: string): TemplateResult {
+  private _renderPowerIcon(currentPowerStatus: string, currentStatus: string): TemplateResult {
 
     if (!powerIcons[this._lower(currentPowerStatus)]) {
       return html``;
     }
+
+    const isSelected  = !!(currentPowerStatus === currentStatus)
+
+    console.info(`[Humidifier-card]: fan icon : _renderPowerIcon : ${currentPowerStatus} current : ${currentStatus} isSelected: ${isSelected}`)
+    
     return html`
       <ha-icon-button
-        class=${classMap({ "selected-icon": (this._lower(currentPowerStatus) === "on") })}
+        class=${classMap({ "selected-icon": isSelected })}
         .status=${currentPowerStatus}
         @click=${this._handlePowerAction}
         tabindex="0"
@@ -388,16 +354,39 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   }
 
 
-  private _renderIcon(mode: string, currentMode: string): TemplateResult {
+  private _renderFanIcon(fanMode: string, currentFanMode: string | undefined, poweredOff: boolean): TemplateResult {
+
+    const isSelected = !!(currentFanMode === fanMode)
+    console.info(`[Humidifier-card]: fan icon : render : ${fanMode} current : ${currentFanMode} poweredOff: ${poweredOff} isSelected: ${isSelected}`)
+
+    if (!fanModeIcons[this._lower(fanMode)]) {
+      console.info("[Humidifier-card]: no fan icon found, no html")
+      return html``;
+    }
+    return html`
+      <ha-icon-button
+        class=${classMap({ "selected-icon": (isSelected && !poweredOff) })}
+        .mode=${fanMode}
+        @click=${this._handleFanAction}
+        tabindex="0"
+        .path=${fanModeIcons[this._lower(fanMode)]}
+        .label=${fanMode}
+      >
+      </ha-icon-button>
+    `;
+  }  
+
+  private _renderIcon(mode: string, currentMode: string, poweredOff: boolean): TemplateResult {
 
     const isSelected = !!(this._lower(currentMode) === this._lower(mode))
 
     if (!modeIcons[this._lower(mode)]) {
       return html``;
     }
+    console.info(`[Humidifier-card]: mode icon : render : ${mode} current : ${currentMode} poweredOff: ${poweredOff} isSelected: ${isSelected}`)
     return html`
       <ha-icon-button
-        class=${classMap({ "selected-icon": isSelected })}
+        class=${classMap({ "selected-icon": (isSelected && !poweredOff) })}
         .mode=${mode}
         @click=${this._handleAction}
         tabindex="0"
@@ -409,7 +398,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   }
 
   private _handlePowerAction(e: MouseEvent): void {
-    const callService = ((e.currentTarget as any).status === "On") ? "turn_on" : "turn_off"
+    const callService = ((e.currentTarget as any).status === "on") ? "turn_on" : "turn_off"
 
     console.info(`[Humidifier-card]: calling service humidifier.${callService} with value ${(e.currentTarget as any).status}`)
     this.hass!.callService("humidifier", callService, {
@@ -434,10 +423,6 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   }
 
   private _getPrimaryText(hasProblems: boolean, name: string): string {
-    // switch (problem) {
-    //   case 'Tank':
-
-    // }
     return hasProblems ? "Tank is full !" : name
   }
 
@@ -468,19 +453,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
 
     const currentPowerStatus = stateObj.state
 
-
-    // handle manually replacing the Set icon with the airpurifierOff icon on the fly
-    if (stateObj.state === "off") {
-      currentMode = "Off"
-      // const {
-      //   attributes: {
-      //     available_modes: [set, ...others]
-      //   }
-      // } = stateObj
-      stateObj!.attributes.available_modes?.slice(1,stateObj!.attributes.available_modes.length)
-      stateObj!.attributes.available_modes = ["off", ...stateObj.attributes.available_modes]
-    }
-
+    const isPoweredOff = !!(stateObj.state === "off")
 
     const currentTemperatureString = this.hass.states[this._config!.temperature_entity]?.state;
     const currentTemperature = parseFloat(currentTemperatureString) as number;
@@ -497,17 +470,17 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     // eslint-disable-next-line no-console
     console.groupCollapsed("[Humidifier-dump]")
     // eslint-disable-next-line no-console
-    console.info("[DEBUG]: stateObj : ", stateObj)
+    console.log("[DEBUG]: stateObj : ", stateObj)
     // eslint-disable-next-line no-console
-    console.info("[DEBUG]: fanStateObj : ", fanStateObj)
+    console.log("[DEBUG]: fanStateObj : ", fanStateObj)
     // eslint-disable-next-line no-console
-    console.info("[DEBUG]: tankStateObj : ", tankStateObj)
+    console.log("[DEBUG]: tankStateObj : ", tankStateObj)
     // eslint-disable-next-line no-console
-    console.info("[DEBUG]: hass : ", this.hass.states)
+    console.log("[DEBUG]: hass : ", this.hass.states)
     // eslint-disable-next-line no-console
-    console.info("[DEBUG]: this._config : ", this._config)
+    console.log("[DEBUG]: this._config : ", this._config)
     // eslint-disable-next-line no-console
-    console.info("[DEBUG]: this.helpers : ", this._helpers)    
+    console.log("[DEBUG]: isPoweredOff : ", isPoweredOff)    
     // eslint-disable-next-line no-console
     console.groupEnd()
 
@@ -523,7 +496,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
 
     const rtlDirection = computeRTLDirection(this.hass);
 
-    const slider = UNAVAILABLE_STATES.includes(stateObj.state)
+    const slider = (UNAVAILABLE_STATES.includes(stateObj.state) || isPoweredOff)
       ? html` <round-slider disabled="true"></round-slider> `
       : html`
           <round-slider
@@ -636,16 +609,16 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
               ${(stateObj.attributes.available_modes || [])
                 .concat()
                 .sort(compareClimateHumidifierModes)
-                .map((modeItem) => this._renderIcon(modeItem, currentMode))}
+                .map((modeItem) => this._renderIcon(modeItem, currentMode, isPoweredOff))}
             </div>
             <div id="modes">
               ${(fanStateObj.attributes.preset_modes || [])
                 .concat()
                 .sort(compareClimateFanHumidifierModes)
-                .map((modeItem) => this._renderFanIcon(modeItem, currentFanMode))}
-              ${this._renderPowerIcon(currentPowerStatus === 'off' ? "On" : "Off")}
+                .map((modeItem) => this._renderFanIcon(modeItem, currentFanMode, isPoweredOff))}
+              ${this._renderPowerIcon(currentPowerStatus === 'off' ? "on" : "off", currentPowerStatus)}
             </div>
-            ${name}
+            ${this._getPrimaryText(hasProblems, name)}
           </div>
         </div>
       </ha-card>
