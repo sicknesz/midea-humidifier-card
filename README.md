@@ -46,13 +46,13 @@ Hey dude! Help me out for a couple of :beers: or a :coffee:!
 | Name              | Type    | Requirement  | Description                                 | Default             |
 | ----------------- | ------- | ------------ | ------------------------------------------- | ------------------- |
 | type              | string  | **Required** | `custom:midea-humidifier-card`                   |
-| name               | string  | **Optional** | Card name                                   | `Midea Humidifier`  |
-| entity             | string  | **Required** | Humidifier entity ID.                       | `humidifier.<id>`   |
-| fan_entity         | string  | **Optional** | Humidifiers fan entity ID.                  | `fan.<id>`          |
-| humidity_entity    | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
-| temperature_entity | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
-| tank_entity        | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
-| entities(*)        | array   | **Required** | All entities used in the card.              | `sensor.<id>`       |
+| name              | string  | **Optional** | Card name                                   | `Midea Humidifier`  |
+| entity            | string  | **Required** | Humidifier entity ID.                       | `humidifier.<id>`   |
+| fan_entity        | string  | **Optional** | Humidifiers fan entity ID.                  | `fan.<id>`          |
+| humidity_entity   | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| temperature_entity| string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| tank_entity       | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| entities(*)       | array   | **Required** | All entities used in the card.              | `sensor.<id>`       |
 
 * : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
 for this I use the helper function called `hasConfigOrEntitiesChanged` thats present in the frontend code but not as helper,
