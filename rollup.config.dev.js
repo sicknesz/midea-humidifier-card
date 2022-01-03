@@ -6,7 +6,7 @@ import { terser } from "rollup-plugin-terser";
 import json from '@rollup/plugin-json';
 
 export default {
-  input: ["src/hui-humidifier-card.ts"],
+  input: ["src/midea-humidifier-card.ts"],
   output: {
     dir: "./dist",
     format: "es",

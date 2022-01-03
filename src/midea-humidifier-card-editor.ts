@@ -24,7 +24,7 @@ const cardConfigStruct = assign(
 
 const includeDomains = ["humidifier"];
 
-@customElement("hui-humidifier-card-editor")
+@customElement("midea-humidifier-card-editor")
 export class HuiHumidifierCardEditor
   extends LitElement
   implements LovelaceCardEditor
@@ -117,34 +117,34 @@ export class HuiHumidifierCardEditor
 
 declare global {
   interface HTMLElementTagNameMap {
-    "hui-humidifier-card-editor": HuiHumidifierCardEditor;
+    "midea-humidifier-card-editor": HuiHumidifierCardEditor;
   }
 }
 */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
-import { HomeAssistant, fireEvent, ActionConfig, LovelaceCard, LovelaceCardConfig, LovelaceCardEditor } from 'custom-card-helpers';
+import { HomeAssistant, fireEvent, ActionConfig, LovelaceCard, LovelaceCardEditor } from 'custom-card-helpers';
 
-// import { BoilerplateCardConfig } from './types';
+import { HumidifierCardConfig } from './types';
 declare global {
   interface HTMLElementTagNameMap {
-    'boilerplate-card-editor': LovelaceCardEditor;
+    'midea-humidifier-card-editor': LovelaceCardEditor;
     'hui-error-card': LovelaceCard;
   }
 }
 
-// TODO Add your configuration elements here for type-checking
-export interface BoilerplateCardConfig extends LovelaceCardConfig {
-  type: string;
-  name?: string;
-  show_warning?: boolean;
-  show_error?: boolean;
-  test_gui?: boolean;
-  entity?: string;
-  tap_action?: ActionConfig;
-  hold_action?: ActionConfig;
-  double_tap_action?: ActionConfig;
-}
+// // TODO Add your configuration elements here for type-checking
+// export interface BoilerplateCardConfig extends LovelaceCardConfig {
+//   type: string;
+//   name?: string;
+//   show_warning?: boolean;
+//   show_error?: boolean;
+//   test_gui?: boolean;
+//   entity?: string;
+//   tap_action?: ActionConfig;
+//   hold_action?: ActionConfig;
+//   double_tap_action?: ActionConfig;
+// }
 
 
 import { customElement, property, state } from 'lit/decorators';
@@ -190,15 +190,15 @@ const options = {
   },
 };
 
-@customElement('hui-humidifier-card-card-editor')
-export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
+@customElement('midea-humidifier-card-editor')
+export class MideaHumidifierCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private _config?: BoilerplateCardConfig;
+  @state() private _config?: HumidifierCardConfig;
   @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
 
-  public setConfig(config: BoilerplateCardConfig): void {
+  public setConfig(config: HumidifierCardConfig): void {
     this._config = config;
 
     this.loadCardHelpers();

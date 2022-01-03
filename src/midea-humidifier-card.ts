@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   mdiAirHumidifier,
   mdiAirHumidifierOff,
@@ -12,7 +14,7 @@ import {
   mdiAlertCircle,
   mdiPower
 } from "@mdi/js";
-import "@thomasloven/round-slider";
+// import "@thomasloven/round-slider";
 import { HassEntity, STATE_NOT_RUNNING } from "home-assistant-js-websocket";
 import {
   css,
@@ -28,13 +30,14 @@ import { classMap } from "lit/directives/class-map";
 import { 
   HomeAssistant, 
   LovelaceCard, 
-  LovelaceCardEditor,
+  // LovelaceCardEditor,
   applyThemesOnElement,
   fireEvent, 
   EntityConfig, 
   computeRTLDirection, 
   computeDomain,  
 } from 'custom-card-helpers';
+
 import {
   HumidifierEntity,
   HumidifierFanEntity,
@@ -48,8 +51,8 @@ import {
 
 import { LovelaceRowConfig, HumidifierCardConfig } from "./types"
 
-import "../../../components/ha-card";
-import "../../../components/ha-icon-button";
+// import "../../../components/ha-card";
+// import "../../../components/ha-icon-button";
 
 // Re-imported stuff from original humidifier card into custom boilerplate code
 
@@ -127,8 +130,7 @@ export const computeStateName = (stateObj: HassEntity): string =>
     : stateObj.attributes.friendly_name || "";
 
 /** Compute the object ID of a state. */
-export const computeObjectId = (entityId: string): string =>
-  entityId.substr(entityId.indexOf(".") + 1);
+export const computeObjectId = (entityId: string): string => entityId.substr(entityId.indexOf(".") + 1);
 
 const validEntityId = /^(\w+)\.(\w+)$/;
 
@@ -235,19 +237,18 @@ const createEntityNotFoundWarning = (
       )
     : hass.localize("ui.panel.lovelace.warning.starting");
 
-@customElement("hui-warning")
-export class HuiWarning extends LitElement {
-  protected render(): TemplateResult {
-    return html`<ha-alert alert-type="warning"><slot></slot></ha-alert> `;
-  }
-}
+// @customElement("hui-warning")
+// export class HuiWarning extends LitElement {
+//   protected render(): TemplateResult {
+//     return html`<ha-alert alert-type="warning"><slot></slot></ha-alert> `;
+//   }
+// }
 
-declare global {
-  interface HTMLElementTagNameMap {
-    "hui-warning": HuiWarning;
-  }
-}
-
+// declare global {
+//   interface HTMLElementTagNameMap {
+//     "hui-warning": HuiWarning;
+//   }
+// }
 
 
 const UNAVAILABLE = "unavailable";
@@ -274,11 +275,22 @@ const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
   tank: mdiAlertCircle
 }
 
-@customElement("hui-humidifier-card")
-export class HuiHumidifierCard extends LitElement implements LovelaceCard {
+const CARD_NAME = "midea-humidifier-card"
+const version = "1.0.0"
+
+console.info(`%c${CARD_NAME}: ${version}`, 'font-weight: bold');
+(window as any).customCards = (window as any).customCards || [];
+(window as any).customCards.push({
+  type: 'midea-humidifier-card',
+  name: 'Midea Humidifier Card',
+  description: 'Midea Humidifier Lan companion card',
+});
+
+@customElement(CARD_NAME)
+export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   public static async getConfigElement(): Promise<HTMLElement> {
-    await import("./hui-humidifier-card-editor");
-    return document.createElement("hui-humidifier-card-editor");    
+    await import("./midea-humidifier-card-editor");
+    return document.createElement(CARD_NAME+"-editor");    
   }
 
   public static getStubConfig(
@@ -296,15 +308,24 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
       includeDomains
     );
 
-    return { type: "humidifier", entity: foundEntities[0] || "" };
+    
+    return { 
+      type: "humidifier", 
+      entity: foundEntities[0] || "",
+      fan_entity: "",
+      tank_entity: "",
+      humidity_entity: "",
+      temperature_entity: ""
+    };
   }
   @property({ attribute: false }) public hass?: HomeAssistant;
+
+  @property() private _helpers?: any;
 
   @state() private _config?: HumidifierCardConfig;
 
   @state() private _setHum?: number;
 
-//  @query("ha-card") private _card?: HaCard;
 
   public getCardSize(): number {
     return 6;
@@ -317,6 +338,10 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
 
     this._config = config;
   }
+
+  private async loadCardHelpers(): Promise<void> {
+    this._helpers = await (window as any).loadCardHelpers();
+  }  
 
   private _renderFanIcon(fanMode: string, currentFanMode: string | undefined): TemplateResult {
 
@@ -482,6 +507,8 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
     // eslint-disable-next-line no-console
     console.info("[DEBUG]: this._config : ", this._config)
     // eslint-disable-next-line no-console
+    console.info("[DEBUG]: this.helpers : ", this._helpers)    
+    // eslint-disable-next-line no-console
     console.groupEnd()
 
     const name =
@@ -631,6 +658,7 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
+    
 
     if (
       !this._config ||
@@ -870,8 +898,10 @@ export class HuiHumidifierCard extends LitElement implements LovelaceCard {
   }
 }
 
-declare global {
-  interface HTMLElementTagNameMap {
-    "hui-humidifier-card": HuiHumidifierCard;
-  }
-}
+// declare global {
+//   interface HTMLElementTagNameMap {
+//     [CARD_NAME]: MideaHumidifierCard;
+//   }
+// }
+
+
