@@ -16,15 +16,16 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 
 1. Control of all applicances mode (Set, Smart, Continuous, Dry)
 2. Control the 3 preset mode for the fan (Silent, Medium, Turbo)
-3. Warn user when tank is full
+3. Warn user when tank is full, defrost is happening or filter needs to be change/installed
 
 ## TODO
 
 1. add a toggle ion icon button
-2. add the 2 others possible cause of warning (defrosting, air filter need to be changed)
+~~2. add the 2 others possible cause of warning (defrosting, air filter need to be changed)~~
 3. Fix the cards editor
+4. Fix any bugs left
 
-## Installation instructions : Coming soon
+## Installation instructions : Coming soon (very soon !)
 
 Customize to suit your needs and contribute it back to the community
 
@@ -40,7 +41,8 @@ Customize to suit your needs and contribute it back to the community
 
 ## Support
 
-Hey dude! Help me out for a couple of :beers: or a :coffee:!
+Hey dude! Help me out for a couple of :beers: or a :coffee: !
+
 Salut Mec! Tu peu me soutenir en m'offrant quelques :beers: ou un :coffee: !
 
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/zJtVxUAgH)
