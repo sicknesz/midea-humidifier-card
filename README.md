@@ -21,7 +21,7 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 ## TODO
 
 1. add a toggle ion icon button
-~~2. add the 2 others possible cause of warning (defrosting, air filter need to be changed)~~
+2. ~~add the 2 others possible cause of warning (defrosting, air filter need to be changed)~~
 3. Fix the cards editor
 4. Fix any bugs left
 
