@@ -32,11 +32,23 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 Save midea-humidifier-card to <config directory>/www/midea-humidifier-card/midea-humidifier-card.js on your Home Assistant instance.
 
 Example:
+(replace /config with your path if different, it need to be the same folder where configuration.yaml is)
 
 ```
-wget https://raw.githubusercontent.com/custom-cards/midea-humidifier-card/master/dist/midea-humidifier-card.js
 
-mv midea-humidifier-card.js /config/www/community/midea-humidifier-card/
+# EDIT THIS LINE TO FIT YOUR SYSTEM
+export CONFIG_FOLDER = "/config
+
+cd /tmp
+
+wget https://raw.githubusercontent.com/custom-cards/midea-humidifier-card/master/dist/midea-humidifier-card.js
+wget https://raw.githubusercontent.com/custom-cards/midea-humidifier-card/master/dist/midea-humidifier-card-8918c060.js
+wget https://raw.githubusercontent.com/custom-cards/midea-humidifier-card/master/dist/midea-humidifier-card-editor-9a429bb4.js
+
+mkdir -p $CONFIG_FOLDER/www/community/midea-humidifier-card/
+
+mv ./*.js $CONFIG_FOLDER/www/community/midea-humidifier-card/
+
 ```
 
 ## Step 2
