@@ -16,6 +16,8 @@ export interface HumidifierCardConfig extends LovelaceCardConfig {
   filter_entity: string;
   humidity_entity: string;
   temperature_entity: string;
+  ion_entity: string;
+  show_ion_toggle: boolean;
   theme?: string;
   name?: string;
 }
