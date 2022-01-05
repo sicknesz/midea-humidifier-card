@@ -1,4 +1,4 @@
-# Midea Humidifier Card by [@sicknesz](https://www.github.com/sicknesz)
+# Midea Humidifier Card 
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/custom-cards/midea-humidifier-card.svg?style=for-the-badge
 [commits]: https://github.com/sicknesz/midea-humidifier-card/commits/master
