@@ -461,7 +461,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     // switch.deshumidificateur_6734_ion_mode
     const ionStateObj = this.hass.states[this._config!.ion_entity] as BinaryEntity;
 
-    let currentMode = this._lower(stateObj!.attributes!.mode) in modeIcons ? stateObj!.attributes!.mode : "unknown-mode" as string;
+    const currentMode = this._lower(stateObj!.attributes!.mode) in modeIcons ? stateObj!.attributes!.mode : "unknown-mode" as string;
     const currentFanMode = this._lower(fanStateObj!.attributes!.preset_mode) in fanModeIcons ? fanStateObj!.attributes!.preset_mode : "unknown-fan-mode" as string;
 
     const currentHumidityString = this.hass.states[this._config!.humidity_entity]!.state;
@@ -600,21 +600,14 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       filter: (filterStateObj.state === 'on')
     }
 
-    let hasIssues = false
-    Object.keys(problems).map(key => {
-      if(problems[key] === true) {
-        hasIssues = true
-        currentMode = 'error'
-      }
-    })
+    const hasIssues = ((tankStateObj.state === 'on')||(defrostStateObj.state === 'on')||(filterStateObj.state === 'on'))
 
-    const ionModeEnabled  = !!(ionStateObj.state === 'on') 
-    
-
+    // const ionModeEnabled  = !!(ionStateObj.state === 'on') 
+  
     return html`
       <ha-card
         class=${classMap({
-      [currentMode]: true,
+      [hasIssues ? 'error' : currentMode]: true,
     })}
       >
         <ha-icon-button
@@ -650,7 +643,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             <div id="modes">
               ${(this._config.show_ion_toggle === true)
                 ? html`<ha-icon-button
-                  class=${classMap({ "ion-icon": ionModeEnabled })}
+                  class=${classMap({ "ion-icon": (ionStateObj.state === 'on') })}
                   tabindex="0"  
                   @click=${this._handleToggleIonModeAction}                
                   .path=${mdiAirPurifier}
