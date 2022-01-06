@@ -256,8 +256,7 @@ const powerIcons: { [status in PowerStatus]: string } = {
 const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
   silent: mdiFanSpeed1,
   medium: mdiFanSpeed2,
-  turbo: mdiFanSpeed3,
-  tank: mdiAlertCircle
+  turbo: mdiFanSpeed3
 }
 
 const CARD_NAME = "midea-humidifier-card";

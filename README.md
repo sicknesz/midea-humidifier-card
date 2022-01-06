@@ -89,6 +89,25 @@ entities:
 
 ```
 
+## Options
+
+| Name              | Type    | Requirement  | Description                                 | Default             |
+| ----------------- | ------- | ------------ | ------------------------------------------- | ------------------- |
+| type              | string  | **Required** | `custom:midea-humidifier-card`                   |
+| name              | string  | **Optional** | Card name                                   | `Midea Humidifier`  |
+| entity            | string  | **Required** | Humidifier entity ID.                       | `humidifier.<id>`   |
+| fan_entity        | string  | **Optional** | Humidifiers fan entity ID.                  | `fan.<id>`          |
+| humidity_entity   | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| temperature_entity| string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| tank_entity       | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
+| entities(*)       | array   | **Required** | All entities used in the card.              | `<domain>.<id>`     |
+
+- : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
+for this I use the helper function called `hasConfigOrEntitiesChanged` thats present in the frontend code but not as helper,
+I re-implemented it because the card uses it to know if *any entities* has changed meaning that without it clicking on a fan's speed would
+not update the UI until an action was taken on the main entity, so the yaml for this card is a bit longer that usual but it does the tricks
+
+
 ## Screenshots
 
 ![Screenshot #1](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/Screenshot_1.png?raw=true>)
@@ -109,21 +128,3 @@ Hey dude! Help me out for a couple of :beers: or a :coffee: !
 Salut Mec! Tu peu me soutenir en m'offrant quelques :beers: ou un :coffee: !
 
 [![coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/zJtVxUAgH)
-
-## Options
-
-| Name              | Type    | Requirement  | Description                                 | Default             |
-| ----------------- | ------- | ------------ | ------------------------------------------- | ------------------- |
-| type              | string  | **Required** | `custom:midea-humidifier-card`                   |
-| name              | string  | **Optional** | Card name                                   | `Midea Humidifier`  |
-| entity            | string  | **Required** | Humidifier entity ID.                       | `humidifier.<id>`   |
-| fan_entity        | string  | **Optional** | Humidifiers fan entity ID.                  | `fan.<id>`          |
-| humidity_entity   | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
-| temperature_entity| string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
-| tank_entity       | string  | **Optional** | Humidifiers fan entity ID.                  | `sensor.<id>`       |
-| entities(*)       | array   | **Required** | All entities used in the card.              | `<domain>.<id>`     |
-
-- : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
-for this I use the helper function called `hasConfigOrEntitiesChanged` thats present in the frontend code but not as helper,
-I re-implemented it because the card uses it to know if *any entities* has changed meaning that without it clicking on a fan's speed would
-not update the UI until an action was taken on the main entity, so the yaml for this card is a bit longer that usual but it does the tricks
