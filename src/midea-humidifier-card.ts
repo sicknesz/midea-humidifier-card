@@ -307,6 +307,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       temperature_entity: `sensor.${foundEntities[0]}_temperature`,
       ion_entity: `switch.${foundEntities[0]}_ion_mode`,
       // display the ion toggle icon true||false
+      swap_target_and_current_humidity: false,
       show_ion_toggle: true,
       // show_power_button: true
     };
@@ -315,7 +316,9 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
 
   @state() private _config?: HumidifierCardConfig;
 
-  @state() private _setHum?: number;
+  @state() private _targetHumidity?: number;
+
+  @state() private _currentHumidity?: number;
 
   public getCardSize(): number {
     return 6;
@@ -464,7 +467,6 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     const currentFanMode = this._lower(fanStateObj!.attributes!.preset_mode) in fanModeIcons ? fanStateObj!.attributes!.preset_mode : "unknown-fan-mode" as string;
 
     const currentHumidityString = this.hass.states[this._config!.humidity_entity]!.state;
-    const currentHumidity = parseFloat(currentHumidityString) as number;
 
     const currentPowerStatus = stateObj.state
 
@@ -480,6 +482,9 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         </hui-warning>
       `;
     }
+
+
+    const swapTargetAndCurrent = (this._config.swap_target_and_current_humidity === true)
 
     /*
     // eslint-disable-next-line no-//console
@@ -518,18 +523,18 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
           <round-slider 
             .min=${stateObj!.attributes.min_humidity || 0} 
             .max=${stateObj!.attributes.max_humidity || 100} 
-            .value=${targetHumidity} 
+            .value=${swapTargetAndCurrent ? this._currentHumidity : targetHumidity} 
             disabled="true">
           </round-slider>`
       : html`
           <round-slider
-            .value=${targetHumidity}
+            .value=${swapTargetAndCurrent ? this._currentHumidity : targetHumidity}
             .min=${stateObj.attributes.min_humidity || 0}
             .max=${stateObj.attributes.max_humidity || 100}           
             .rtl=${rtlDirection === "rtl"}
-            step="1"
+            step="5"
             @value-changing=${this._dragEvent}
-            @value-changed=${this._setHumidity}>
+            @value-changed=${this._setTargetHumidity}>
           </round-slider>
         `;   
 
@@ -542,8 +547,8 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
           text-anchor="middle"
           style="font-size: 13px;"
         >
-          ${this._setHum && !isNaN(this._setHum) ?
-            svg`${this._setHum.toFixed()}
+          ${this._targetHumidity && !isNaN(this._targetHumidity) ?
+            svg`${swapTargetAndCurrent ? html`${this._currentHumidity?.toFixed()}` : html`${this._targetHumidity.toFixed()}`}
               <tspan dx="-3" dy="-6.5" style="font-size: 4px;">
                 %
               </tspan>
@@ -562,11 +567,11 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         <text text-anchor="middle" class="set-value">
         ${
             UNAVAILABLE_STATES.includes(currentHumidityString) ||
-            currentHumidity === undefined ||
-            currentHumidity === null
+            this._currentHumidity === undefined ||
+            this._currentHumidity === null
               ? ""
               : svg`
-                    ${currentHumidity}% - ${currentTemperature}°C
+                    ${swapTargetAndCurrent ? this._targetHumidity?.toFixed() : this._currentHumidity.toFixed()}% - ${currentTemperature}°C
                     `
           }
         </text>
@@ -719,11 +724,20 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       return;
     }
 
+    const humidityStateObj = this.hass.states[this._config.humidity_entity];
+    if (!humidityStateObj) {
+      return;
+    }    
+
     const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
 
     if (!oldHass || oldHass.states[this._config.entity] !== stateObj) {
-      this._setHum = this._getSetHum(stateObj);
+      this._targetHumidity = this._getTargetHumidity(stateObj);
     }
+
+    if (!oldHass || oldHass.states[this._config.humidity_entity] !== stateObj) {
+      this._currentHumidity = this._getCurrentHumidity(humidityStateObj);
+    }    
   }
 
 
@@ -752,27 +766,35 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     }
   }  
 
-  private _getSetHum(stateObj: HassEntity): undefined | number {
+  private _getTargetHumidity(stateObj: HassEntity): undefined | number {
     
     if (UNAVAILABLE_STATES.includes(stateObj.state)) {
-      //console.warn(`[${CARD_NAME}::_getSetHum]: returning undefined ${stateObj.state}`)
+      //console.warn(`[${CARD_NAME}::_getTargetHumidity]: returning undefined ${stateObj.state}`)
       return undefined;
     }
-    //console.warn(`[${CARD_NAME}::_getSetHum]: returning ${stateObj.attributes.humidity}`)
+    //console.warn(`[${CARD_NAME}::_getTargetHumidity]: returning ${stateObj.attributes.humidity}`)
     return stateObj.attributes.humidity;
   }
 
   private _dragEvent(e): void {    
-    this._setHum = e.detail.value;
-    //console.warn(`[${CARD_NAME}::_dragEvent]: returning ${this._setHum}`)
+    this._targetHumidity = e.detail.value;
+    //console.warn(`[${CARD_NAME}::_dragEvent]: returning ${this._targetHumidity}`)
   }
 
-  private _setHumidity(e): void {
-    //console.warn(`[${CARD_NAME}::_setHumidity]: setting ${e.detail.value} - this._setHum: ${this._setHum}`)
+  private _setTargetHumidity(e): void {
+    //console.warn(`[${CARD_NAME}::_targetHumidityidity]: setting ${e.detail.value} - this._targetHumidity: ${this._targetHumidity}`)
     this.hass!.callService("humidifier", "set_humidity", {
       entity_id: this._config!.entity,
       humidity: e.detail.value,
     });
+  }
+
+  private _getCurrentHumidity(stateObj: HassEntity): undefined | number {
+    if (UNAVAILABLE_STATES.includes(stateObj.state) || isNaN(parseFloat(stateObj.state))) {
+      //console.warn(`[${CARD_NAME}::_getTargetHumidity]: returning undefined ${stateObj.state}`)
+      return undefined;
+    }
+    return parseFloat(stateObj.state);
   }
 
 

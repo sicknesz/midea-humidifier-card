@@ -19,6 +19,7 @@ export interface HumidifierCardConfig extends LovelaceCardConfig {
   temperature_entity: string;
   ion_entity: string;
   show_ion_toggle: boolean;
+  swap_target_and_current_humidity: boolean;
   theme?: string;
   name?: string;
 }
