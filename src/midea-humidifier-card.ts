@@ -12,7 +12,6 @@ import {
   mdiFanSpeed1,
   mdiFanSpeed2,
   mdiFanSpeed3,
-  mdiAlertCircle,
   mdiPower,
   mdiPowerCycle,
   mdiSnowflake
