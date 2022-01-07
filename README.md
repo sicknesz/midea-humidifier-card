@@ -108,13 +108,13 @@ entities:
 | tank_entity                      | string  | **Optional** | Humidifiers tank binary sensor entity       | `binary_sensor.<id>` |
 | filter_entity                    | string  | **Optional** | Humidifiers filter binary sensor entity     | `binary_sensor.<id>` |
 | defrost_entity                   | string  | **Optional** | Humidifiers defrost binary sensor entity    | `binary_sensor.<id>` |
-| show_ion_toggle                  | string  | **Optional** | All entities used in the card.              | `<domain>.<id>`      |
-| swap_target_and_current_humidity | string  | **Optional** | All entities used in the card.              | `<domain>.<id>`      |
-| entities(*)                      | array   | **Required** | All entities used in the card.              | `(...)`      |
+| show_ion_toggle                  | boolean | **Optional** | Display the ion toggle icon.                | true                 |
+| swap_target_and_current_humidity | boolean | **Optional** | Swap current and target humidity display    | false                |
+| *entities*                       | array   | **Required** | All entities used in the card.              | ...                  |
 
-- : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
+*entities* : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
 for this I use the helper function called `hasConfigOrEntitiesChanged` thats present in the frontend code but not as helper,
-I re-implemented it because the card uses it to know if *any entities* has changed meaning that without it clicking on a fan's speed would
+I re-implemented it because the card uses it to know if*any entities* has changed meaning that without it clicking on a fan's speed would
 not update the UI until an action was taken on the main entity, so the yaml for this card is a bit longer that usual but it does the tricks
 
 ## Screenshots
