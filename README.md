@@ -1,12 +1,12 @@
 # Midea Humidifier Card
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-cards/midea-humidifier-card.svg?style=for-the-badge
-[commits]: https://github.com/sicknesz/midea-humidifier-card/commits/master
+[commits-shield]: https://img.shields.io/github/commit-activity/y/midea-inventor-card/midea-humidifier-card.svg?style=for-the-badge
+[commits]: https://github.com/sickneszmidea-inventor-card/commits/master
 [devcontainer]: https://code.visualstudio.com/docs/remote/containers
 [forum]: https://community.home-assistant.io/c/projects/frontend
-[license-shield]: https://img.shields.io/github/license/custom-cards/midea-humidifier-card.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/midea-inventor-card/midea-humidifier-card.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/custom-cards/midea-humidifier-card.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/midea-inventor-card/midea-humidifier-card.svg?style=for-the-badge
 [releases]: https://github.com/sicknesz/midea-humidifier-card/releases
 
 A companion card to the Midea Humidifier Lan integration that added tons of options comparing to previous integrations, so much that the classic
@@ -23,7 +23,9 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 1. ~~add a toggle ion icon button~~
 2. ~~add the 2 others possible cause of warning (defrosting, air filter need to be changed)~~
 3. ~~Fix any bugs left~~
-4. Fix the cards editor
+4. ~~swappable current and target humidity display~~
+5. ~~better icons~~
+6. Write the cards editor
 
 # Installation
 
@@ -41,9 +43,9 @@ export CONFIG_FOLDER = "/config
 
 cd /tmp
 
-wget https://raw.githubusercontent.com/custom-cards/midea-humidifier-card/master/dist/midea-humidifier-card.js
-wget https://raw.githubusercontent.com/custom-cards/midea-humidifier-card/master/dist/midea-humidifier-card-8918c060.js
-wget https://raw.githubusercontent.com/custom-cards/midea-humidifier-card/master/dist/midea-humidifier-card-editor-9a429bb4.js
+wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card.js
+wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-d30fe2cc.js
+wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-editor-ac43bb57.js
 
 mkdir -p $CONFIG_FOLDER/www/community/midea-humidifier-card/
 
@@ -66,27 +68,31 @@ resources:
 
 Add a custom element in your ui-lovelace.yaml or in the UI Editor as a Manual Card
 
+PS : If you do not see the filter and defrost entities, it's because they're disabled by default on the integration, to enable them
+navigate to /config/integrations choose the midea humidifier lan integration, click on "11 entities",
+search for defrost and enable the defrost and filter entities, then you'll be able to add them to the card
+
 ```
 type: 'custom:midea-humidifier-card'
-entity: humidifier.dehumidifier_XYZ
-humidity_entity: sensor.dehumidifier_XYZ_humidity
-temperature_entity: sensor.dehumidifier_XYZ_temperature
-fan_entity: fan.dehumidifier_XYZ_fan
-filter_entity: binary_sensor.dehumidifier_XYZ_replace_filter
-defrost_entity: binary_sensor.dehumidifier_XYZ_defrosting
-tank_entity: binary_sensor.dehumidifier_XYZ_tank_full
-ion_entity: switch.dehumidifier_XYZ_ion_mode
+entity: humidifier.deshumidificateur_6734
+humidity_entity: sensor.deshumidificateur_6734_humidity
+temperature_entity: sensor.deshumidificateur_6734_temperature
+fan_entity: fan.deshumidificateur_6734_fan
+filter_entity: binary_sensor.dehumidifier_6734_replace_filter
+defrost_entity: binary_sensor.dehumidifier_6734_defrosting
+tank_entity: binary_sensor.deshumidificateur_6734_tank_full
+ion_entity: switch.deshumidificateur_6734_ion_mode
 show_ion_toggle: true
+swap_target_and_current_humidity: true
 entities:
-  - humidifier.dehumidifier_XYZ
-  - sensor.dehumidifier_XYZ_humidity
-  - sensor.dehumidifier_XYZ_temperature
-  - fan.dehumidifier_XYZ_fan
-  - binary_sensor.dehumidifier_XYZ_tank_full
-  - binary_sensor.dehumidifier_XYZ_defrosting
-  - binary_sensor.dehumidifier_XYZ_replace_filter
-  - switch.dehumidifier_XYZ_ion_mode
-
+  - humidifier.deshumidificateur_6734
+  - sensor.deshumidificateur_6734_humidity
+  - sensor.deshumidificateur_6734_temperature
+  - fan.deshumidificateur_6734_fan
+  - binary_sensor.deshumidificateur_6734_tank_full
+  - binary_sensor.deshumidificateur_6734_defrosting
+  - binary_sensor.deshumidificateur_6734_replace_filter
+  - switch.deshumidificateur_6734_ion_mode
 ```
 
 ## Options
@@ -107,7 +113,6 @@ for this I use the helper function called `hasConfigOrEntitiesChanged` thats pre
 I re-implemented it because the card uses it to know if *any entities* has changed meaning that without it clicking on a fan's speed would
 not update the UI until an action was taken on the main entity, so the yaml for this card is a bit longer that usual but it does the tricks
 
-
 ## Screenshots
 
 ![Screenshot #1](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/Screenshot_1.png?raw=true>)
@@ -120,6 +125,8 @@ not update the UI until an action was taken on the main entity, so the yaml for 
 ![Screenshot #8](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/Screenshot_8.png?raw=true>)
 ![Screenshot #9](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/Screenshot_9.png?raw=true>)
 ![Screenshot #10](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/Screenshot_10.png?raw=true>)
+![Screenshot #11](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/Screenshot_11.png?raw=true>)
+![Screenshot #12](<https://github.com/sicknesz/midea-inventor-card/blob/master/docs/Screenshot_12.png?raw=true>)
 
 ## Support
 
