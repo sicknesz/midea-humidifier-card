@@ -17,6 +17,10 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 1. Control of all applicances mode (Set, Smart, Continuous, Dry)
 2. Control the 3 preset mode for the fan (Silent, Medium, Turbo)
 3. Warn user when tank is full, defrost is happening or filter needs to be change/installed
+4. Swappable current and target humidity for more consistence with the thermostat card
+5. Toggle for ion button display
+6. Localized
+7. Editor is working and should normally autofill everything for you
 
 ## TODO
 
@@ -25,7 +29,8 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 3. ~~Fix any bugs left~~
 4. ~~swappable current and target humidity display~~
 5. ~~better icons~~
-6. Write the cards editor
+6. ~~Write the cards editor~~
+7. ~~code is more robust~~
 
 # Installation
 
@@ -44,8 +49,6 @@ export CONFIG_FOLDER = "/config
 cd /tmp
 
 wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card.js
-wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-d30fe2cc.js
-wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-editor-ac43bb57.js
 
 mkdir -p $CONFIG_FOLDER/www/community/midea-humidifier-card/
 
@@ -66,33 +69,37 @@ resources:
 
 ## Step 3
 
-Add a custom element in your ui-lovelace.yaml or in the UI Editor as a Manual Card
+Click to add an element to your lovelace view, select the midea-humidifier-card, it will open the visual card editor
+but everything should be autoconfigured properly unless you have more than one humidifier, in that case just manually click and set all fields in the editor.
+
+### Troubleshooting
 
 PS : If you do not see the filter and defrost entities, it's because they're disabled by default on the integration, to enable them
 navigate to /config/integrations choose the midea humidifier lan integration, click on "11 entities",
-search for defrost and enable the defrost and filter entities, then you'll be able to add them to the card
+search for defrost and enable the defrost and filter entities (if they're not visible look at the entity filter and disable it)
+then you'll be able to add them to the card.
 
 ```
 type: 'custom:midea-humidifier-card'
-entity: humidifier.deshumidificateur_6734
-humidity_entity: sensor.deshumidificateur_6734_humidity
-temperature_entity: sensor.deshumidificateur_6734_temperature
-fan_entity: fan.deshumidificateur_6734_fan
-filter_entity: binary_sensor.dehumidifier_6734_replace_filter
-defrost_entity: binary_sensor.dehumidifier_6734_defrosting
-tank_entity: binary_sensor.deshumidificateur_6734_tank_full
-ion_entity: switch.deshumidificateur_6734_ion_mode
+entity: humidifier.dehumidifier_<deviceID>
+humidity_entity: sensor.dehumidifier_<deviceID>_humidity
+temperature_entity: sensor.dehumidifier_<deviceID>_temperature
+fan_entity: fan.dehumidifier_<deviceID>_fan
+filter_entity: binary_sensor.dehumidifier_<deviceID>_replace_filter
+defrost_entity: binary_sensor.dehumidifier_<deviceID>_defrosting
+tank_entity: binary_sensor.dehumidifier_<deviceID>_tank_full
+ion_entity: switch.dehumidifier_<deviceID>_ion_mode
 show_ion_toggle: true
 swap_target_and_current_humidity: true
 entities:
-  - humidifier.deshumidificateur_6734
-  - sensor.deshumidificateur_6734_humidity
-  - sensor.deshumidificateur_6734_temperature
-  - fan.deshumidificateur_6734_fan
-  - binary_sensor.deshumidificateur_6734_tank_full
-  - binary_sensor.deshumidificateur_6734_defrosting
-  - binary_sensor.deshumidificateur_6734_replace_filter
-  - switch.deshumidificateur_6734_ion_mode
+  - humidifier.dehumidifier_<deviceID>
+  - sensor.dehumidifier_<deviceID>_humidity
+  - sensor.dehumidifier_<deviceID>_temperature
+  - fan.dehumidifier_<deviceID>_fan
+  - binary_sensor.dehumidifier_<deviceID>_tank_full
+  - binary_sensor.dehumidifier_<deviceID>_defrosting
+  - binary_sensor.dehumidifier_<deviceID>_replace_filter
+  - switch.dehumidifier_<deviceID>_ion_mode
 ```
 
 ## Options
@@ -104,18 +111,19 @@ entities:
 | entity                           | string  | **Required** | Humidifier entity ID.                       | `humidifier.<id>`    |
 | fan_entity                       | string  | **Required** | Humidifiers fan entity ID.                  | `fan.<id>`           |
 | humidity_entity                  | string  | **Required** | Humidifiers humidity sensor entity ID.      | `sensor.<id>`        |
-| temperature_entity               | string  | **Optional** | Humidifiers temperature sensor entity ID.   | `sensor.<id>`        |
+| temperature_entity               | string  | **Required** | Humidifiers temperature sensor entity ID.   | `sensor.<id>`        |
 | tank_entity                      | string  | **Optional** | Humidifiers tank binary sensor entity       | `binary_sensor.<id>` |
 | filter_entity                    | string  | **Optional** | Humidifiers filter binary sensor entity     | `binary_sensor.<id>` |
 | defrost_entity                   | string  | **Optional** | Humidifiers defrost binary sensor entity    | `binary_sensor.<id>` |
 | show_ion_toggle                  | boolean | **Optional** | Display the ion toggle icon.                | true                 |
-| swap_target_and_current_humidity | boolean | **Optional** | Swap current and target humidity display    | false                |
+| swap_target_and_current_humidity | boolean | **Optional** | Swap current and target humidity display    | true                 |
 | *entities*                       | array   | **Required** | All entities used in the card.              | ...                  |
 
 *entities* : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
 for this I use the helper function called `hasConfigOrEntitiesChanged` thats present in the frontend code but not as helper,
 I re-implemented it because the card uses it to know if*any entities* has changed meaning that without it clicking on a fan's speed would
 not update the UI until an action was taken on the main entity, so the yaml for this card is a bit longer that usual but it does the tricks
+If using the visual editor, the entities are autofilled
 
 ## Screenshots
 

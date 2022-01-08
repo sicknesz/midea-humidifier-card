@@ -1,129 +1,8 @@
-/*
-import "@polymer/paper-input/paper-input";
-import { CSSResultGroup, html, LitElement, TemplateResult } from "lit";
-import { customElement, property, state } from "lit/decorators";
-import { assert, assign, object, optional, string } from "superstruct";
-import { fireEvent } from "../../../../common/dom/fire_event";
-import "../../../../components/entity/ha-entity-picker";
-import { HomeAssistant } from "../../../../types";
-import { HumidifierCardConfig } from "../../cards/types";
-import "../../components/hui-theme-select-editor";
-import { LovelaceCardEditor } from "../../types";
-import { baseLovelaceCardConfig } from "../structs/base-card-struct";
-import { EditorTarget, EntitiesEditorEvent } from "../types";
-import { configElementStyle } from "./config-elements-style";
 
-const cardConfigStruct = assign(
-  baseLovelaceCardConfig,
-  object({
-    entity: optional(string()),
-    name: optional(string()),
-    theme: optional(string()),
-  })
-);
-
-const includeDomains = ["humidifier"];
-
-@customElement("midea-humidifier-card-editor")
-export class HuiHumidifierCardEditor
-  extends LitElement
-  implements LovelaceCardEditor
-{
-  @property({ attribute: false }) public hass?: HomeAssistant;
-
-  @state() private _config?: HumidifierCardConfig;
-
-  public setConfig(config: HumidifierCardConfig): void {
-    assert(config, cardConfigStruct);
-    this._config = config;
-  }
-
-  get _entity(): string {
-    return this._config!.entity || "";
-  }
-
-  get _name(): string {
-    return this._config!.name || "";
-  }
-
-  get _theme(): string {
-    return this._config!.theme || "";
-  }
-
-  protected render(): TemplateResult {
-    if (!this.hass || !this._config) {
-      return html``;
-    }
-
-    return html`
-      <div class="card-config">
-        <ha-entity-picker
-          .label="${this.hass.localize(
-            "ui.panel.lovelace.editor.card.generic.entity"
-          )} (${this.hass.localize(
-            "ui.panel.lovelace.editor.card.config.required"
-          )})"
-          .hass=${this.hass}
-          .value=${this._entity}
-          .configValue=${"entity"}
-          .includeDomains=${includeDomains}
-          @change=${this._valueChanged}
-          allow-custom-entity
-        ></ha-entity-picker>
-        <paper-input
-          .label="${this.hass.localize(
-            "ui.panel.lovelace.editor.card.generic.name"
-          )} (${this.hass.localize(
-            "ui.panel.lovelace.editor.card.config.optional"
-          )})"
-          .value=${this._name}
-          .configValue=${"name"}
-          @value-changed=${this._valueChanged}
-        ></paper-input>
-        <hui-theme-select-editor
-          .hass=${this.hass}
-          .value=${this._theme}
-          .configValue=${"theme"}
-          @value-changed=${this._valueChanged}
-        ></hui-theme-select-editor>
-      </div>
-    `;
-  }
-
-  private _valueChanged(ev: EntitiesEditorEvent): void {
-    if (!this._config || !this.hass) {
-      return;
-    }
-    const target = ev.target! as EditorTarget;
-
-    if (this[`_${target.configValue}`] === target.value) {
-      return;
-    }
-    if (target.configValue) {
-      if (target.value === "") {
-        this._config = { ...this._config };
-        delete this._config[target.configValue!];
-      } else {
-        this._config = { ...this._config, [target.configValue!]: target.value };
-      }
-    }
-    fireEvent(this, "config-changed", { config: this._config });
-  }
-
-  static get styles(): CSSResultGroup {
-    return configElementStyle;
-  }
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    "midea-humidifier-card-editor": HuiHumidifierCardEditor;
-  }
-}
-*/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LitElement, html, TemplateResult, css, CSSResultGroup } from 'lit';
-import { HomeAssistant, fireEvent, ActionConfig, LovelaceCard, LovelaceCardEditor } from 'custom-card-helpers';
+import { HomeAssistant, fireEvent, LovelaceCard, LovelaceCardEditor } from 'custom-card-helpers'
+import { localize } from './localize/localize';
 
 import { HumidifierCardConfig } from './types';
 declare global {
@@ -133,72 +12,20 @@ declare global {
   }
 }
 
-// // TODO Add your configuration elements here for type-checking
-// export interface BoilerplateCardConfig extends LovelaceCardConfig {
-//   type: string;
-//   name?: string;
-//   show_warning?: boolean;
-//   show_error?: boolean;
-//   test_gui?: boolean;
-//   entity?: string;
-//   tap_action?: ActionConfig;
-//   hold_action?: ActionConfig;
-//   double_tap_action?: ActionConfig;
-// }
-
-
 import { customElement, property, state } from 'lit/decorators';
 
-const options = {
-  required: {
-    icon: 'tune',
-    name: 'Required',
-    secondary: 'Required options for this card to function',
-    show: true,
-  },
-  actions: {
-    icon: 'gesture-tap-hold',
-    name: 'Actions',
-    secondary: 'Perform actions based on tapping/clicking',
-    show: false,
-    options: {
-      tap: {
-        icon: 'gesture-tap',
-        name: 'Tap',
-        secondary: 'Set the action to perform on tap',
-        show: false,
-      },
-      hold: {
-        icon: 'gesture-tap-hold',
-        name: 'Hold',
-        secondary: 'Set the action to perform on hold',
-        show: false,
-      },
-      double_tap: {
-        icon: 'gesture-double-tap',
-        name: 'Double Tap',
-        secondary: 'Set the action to perform on double tap',
-        show: false,
-      },
-    },
-  },
-  appearance: {
-    icon: 'palette',
-    name: 'Appearance',
-    secondary: 'Customize the name, icon, etc',
-    show: false,
-  },
-};
+const CARD_NAME = "midea-humidifier-card-editor"
 
-@customElement('midea-humidifier-card-editor')
+const debug = input => JSON.stringify(input, null, 2)
+@customElement("midea-humidifier-card-editor")
 export class MideaHumidifierCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: HumidifierCardConfig;
-  @state() private _toggle?: boolean;
   @state() private _helpers?: any;
   private _initialized = false;
 
   public setConfig(config: HumidifierCardConfig): void {
+    console.warn(`[${CARD_NAME}::setConfig]: config : ${debug(config)}`)
     this._config = config;
 
     this.loadCardHelpers();
@@ -220,24 +47,40 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
     return this._config?.entity || '';
   }
 
-  get _show_warning(): boolean {
-    return this._config?.show_warning || false;
+  get _fan_entity(): string {
+    return this._config?.fan_entity || '';
+  }
+  
+  get _humidity_entity(): string {
+    return this._config?.humidity_entity || '';
+  }  
+  
+  get _temperature_entity(): string {
+    return this._config?.temperature_entity || '';
+  }    
+
+  get _ion_entity(): string {
+    return this._config?.ion_entity || '';
   }
 
-  get _show_error(): boolean {
-    return this._config?.show_error || false;
+  get _defrost_entity(): string {
+    return this._config?.defrost_entity || '';
+  }  
+
+  get _filter_entity(): string {
+    return this._config?.filter_entity || '';
+  }  
+
+  get _tank_entity(): string {
+    return this._config?.tank_entity || '';
+  }
+    
+  get _show_ion_toggle(): boolean {
+    return this._config?.show_ion_toggle || false;
   }
 
-  get _tap_action(): ActionConfig {
-    return this._config?.tap_action || { action: 'more-info' };
-  }
-
-  get _hold_action(): ActionConfig {
-    return this._config?.hold_action || { action: 'none' };
-  }
-
-  get _double_tap_action(): ActionConfig {
-    return this._config?.double_tap_action || { action: 'none' };
+  get _swap_target_and_current_humidity(): boolean {
+    return this._config?.swap_target_and_current_humidity || false;
   }
 
   protected render(): TemplateResult | void {
@@ -249,125 +92,120 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
     this._helpers.importMoreInfoControl('climate');
 
     // You can restrict on domain type
-    const entities = Object.keys(this.hass.states).filter(eid => eid.substr(0, eid.indexOf('.')) === 'sun');
+    const humidifierDomains = ["humidifier"];
+    const sensorDomains = ["sensor"];
+    const fanDomains = ["fan"];
+    const binarySensorDomains = ["binary_sensor"];
 
     return html`
       <div class="card-config">
-        <div class="option" @click=${this._toggleOption} .option=${'required'}>
-          <div class="row">
-            <ha-icon .icon=${`mdi:${options.required.icon}`}></ha-icon>
-            <div class="title">${options.required.name}</div>
-          </div>
-          <div class="secondary">${options.required.secondary}</div>
-        </div>
-        ${options.required.show
-          ? html`
-              <div class="values">
-                <paper-dropdown-menu
-                  label="Entity (Required)"
-                  @value-changed=${this._valueChanged}
-                  .configValue=${'entity'}
-                >
-                  <paper-listbox slot="dropdown-content" .selected=${entities.indexOf(this._entity)}>
-                    ${entities.map(entity => {
-                      return html`
-                        <paper-item>${entity}</paper-item>
-                      `;
-                    })}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-            `
-          : ''}
-        <div class="option" @click=${this._toggleOption} .option=${'actions'}>
-          <div class="row">
-            <ha-icon .icon=${`mdi:${options.actions.icon}`}></ha-icon>
-            <div class="title">${options.actions.name}</div>
-          </div>
-          <div class="secondary">${options.actions.secondary}</div>
-        </div>
-        ${options.actions.show
-          ? html`
-              <div class="values">
-                <div class="option" @click=${this._toggleAction} .option=${'tap'}>
-                  <div class="row">
-                    <ha-icon .icon=${`mdi:${options.actions.options.tap.icon}`}></ha-icon>
-                    <div class="title">${options.actions.options.tap.name}</div>
-                  </div>
-                  <div class="secondary">${options.actions.options.tap.secondary}</div>
-                </div>
-                ${options.actions.options.tap.show
-                  ? html`
-                      <div class="values">
-                        <paper-item>Action Editors Coming Soon</paper-item>
-                      </div>
-                    `
-                  : ''}
-                <div class="option" @click=${this._toggleAction} .option=${'hold'}>
-                  <div class="row">
-                    <ha-icon .icon=${`mdi:${options.actions.options.hold.icon}`}></ha-icon>
-                    <div class="title">${options.actions.options.hold.name}</div>
-                  </div>
-                  <div class="secondary">${options.actions.options.hold.secondary}</div>
-                </div>
-                ${options.actions.options.hold.show
-                  ? html`
-                      <div class="values">
-                        <paper-item>Action Editors Coming Soon</paper-item>
-                      </div>
-                    `
-                  : ''}
-                <div class="option" @click=${this._toggleAction} .option=${'double_tap'}>
-                  <div class="row">
-                    <ha-icon .icon=${`mdi:${options.actions.options.double_tap.icon}`}></ha-icon>
-                    <div class="title">${options.actions.options.double_tap.name}</div>
-                  </div>
-                  <div class="secondary">${options.actions.options.double_tap.secondary}</div>
-                </div>
-                ${options.actions.options.double_tap.show
-                  ? html`
-                      <div class="values">
-                        <paper-item>Action Editors Coming Soon</paper-item>
-                      </div>
-                    `
-                  : ''}
-              </div>
-            `
-          : ''}
-        <div class="option" @click=${this._toggleOption} .option=${'appearance'}>
-          <div class="row">
-            <ha-icon .icon=${`mdi:${options.appearance.icon}`}></ha-icon>
-            <div class="title">${options.appearance.name}</div>
-          </div>
-          <div class="secondary">${options.appearance.secondary}</div>
-        </div>
-        ${options.appearance.show
-          ? html`
-              <div class="values">
-                <paper-input
-                  label="Name (Optional)"
-                  .value=${this._name}
-                  .configValue=${'name'}
-                  @value-changed=${this._valueChanged}
-                ></paper-input>
-                <br />
-                <ha-formfield .label=${`Toggle warning ${this._show_warning ? 'off' : 'on'}`}>
-                  <ha-switch
-                    .checked=${this._show_warning !== false}
-                    .configValue=${'show_warning'}
-                    @change=${this._valueChanged}
-                  ></ha-switch>
-                </ha-formfield>
-                <ha-formfield .label=${`Toggle error ${this._show_error ? 'off' : 'on'}`}>
-                  <ha-switch
-                    .checked=${this._show_error !== false}
-                    .configValue=${'show_error'}
-                    @change=${this._valueChanged}
-                  ></ha-switch>
-                </ha-formfield>
-              </div>
-            `
-          : ''}
+        <ha-entity-picker
+            .label="${this.hass.localize(
+              "ui.panel.lovelace.editor.card.generic.entity"
+            )} (${this.hass.localize(
+              "ui.panel.lovelace.editor.card.config.required"
+            )}) - ${this.hass.localize(
+              "ui.panel.lovelace.editor.card.humidifier.name"
+            )}"
+            .hass=${this.hass}
+            .value=${this._entity}
+            .configValue=${"entity"}
+            .includeDomains=${humidifierDomains}
+            @change=${this._valueChanged}
+            allow-custom-entity
+          ></ha-entity-picker>
+          <ha-entity-picker
+            .label="${this.hass.localize(
+              "ui.panel.lovelace.editor.card.generic.entity"
+            )} (${this.hass.localize(
+              "ui.panel.lovelace.editor.card.config.required"
+            )}) - ${this.hass.localize(
+              "state_attributes.climate.hvac_action.fan"
+            )}"
+            .hass=${this.hass}
+            .value=${this._fan_entity}
+            .configValue=${"fan_entity"}
+            .includeDomains=${fanDomains}
+            @change=${this._valueChanged}
+            allow-custom-entity
+          ></ha-entity-picker>          
+          <ha-entity-picker
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.entity"
+          )} (${this.hass.localize(
+            "ui.panel.lovelace.editor.card.config.required"
+          )}) - ${this.hass.localize(
+            "ui.card.weather.attributes.humidity"
+          )}"
+          .hass=${this.hass}
+          .value=${this._humidity_entity}
+          .configValue=${"humidity_entity"}
+          .includeDomains=${sensorDomains}
+          @change=${this._valueChanged}
+          allow-custom-entity
+        ></ha-entity-picker>
+        <ha-entity-picker
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.entity"
+          )} (${this.hass.localize(
+            "ui.panel.lovelace.editor.card.config.required"
+          )}) - ${this.hass.localize(
+            "ui.card.weather.attributes.temperature"
+          )}"
+          .hass=${this.hass}
+          .value=${this._temperature_entity}
+          .configValue=${"temperature_entity"}
+          .includeDomains=${sensorDomains}
+          @change=${this._valueChanged}
+          allow-custom-entity
+        ></ha-entity-picker>
+        <ha-entity-picker
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.entity"
+          )} - ${localize("common.tank")}"
+          .hass=${this.hass}
+          .value=${this._tank_entity}
+          .configValue=${"tank_entity"}
+          .includeDomains=${binarySensorDomains}
+          @change=${this._valueChanged}
+          allow-custom-entity
+        ></ha-entity-picker>
+        <ha-entity-picker
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.entity"
+          )} - ${localize("common.defrost")}"
+          .hass=${this.hass}
+          .value=${this._defrost_entity}
+          .configValue=${"defrost_entity"}
+          .includeDomains=${binarySensorDomains}
+          @change=${this._valueChanged}
+          allow-custom-entity
+        ></ha-entity-picker>  
+        <ha-entity-picker
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.entity"
+          )} - ${localize("common.filter")}"
+          .hass=${this.hass}
+          .value=${this._filter_entity}
+          .configValue=${"filter_entity"}
+          .includeDomains=${binarySensorDomains}
+          @change=${this._valueChanged}
+          allow-custom-entity
+        ></ha-entity-picker>                                           
+        <ha-formfield .label=${`Toggle ion toggle icon ${this._show_ion_toggle ? 'off' : 'on'}`}>
+          <ha-switch
+            .checked=${this._show_ion_toggle !== false}
+            .configValue=${'show_ion_toggle'}
+            @change=${this._valueChanged}
+          ></ha-switch>
+        </ha-formfield>
+        <ha-formfield .label=${`Toggle swap current and target humidity display ${this._swap_target_and_current_humidity ? 'off' : 'on'}`}>
+          <ha-switch
+            .checked=${this._swap_target_and_current_humidity !== false}
+            .configValue=${'swap_target_and_current_humidity'}
+            @change=${this._valueChanged}
+          ></ha-switch>
+        </ha-formfield>                                
       </div>
     `;
   }
@@ -383,23 +221,29 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
     this._helpers = await (window as any).loadCardHelpers();
   }
 
-  private _toggleAction(ev): void {
-    this._toggleThing(ev, options.actions.options);
-  }
 
-  private _toggleOption(ev): void {
-    this._toggleThing(ev, options);
-  }
-
-  private _toggleThing(ev, optionList): void {
-    const show = !optionList[ev.target.option].show;
-    for (const [key] of Object.entries(optionList)) {
-      optionList[key].show = false;
+  /* -- imported --
+  private _valueChanged(ev: EntitiesEditorEvent): void {
+    if (!this._config || !this.hass) {
+      return;
     }
-    optionList[ev.target.option].show = show;
-    this._toggle = !this._toggle;
-  }
+    const target = ev.target! as EditorTarget;
 
+    if (this[`_${target.configValue}`] === target.value) {
+      return;
+    }
+    if (target.configValue) {
+      if (target.value === "") {
+        this._config = { ...this._config };
+        delete this._config[target.configValue!];
+      } else {
+        this._config = { ...this._config, [target.configValue!]: target.value };
+      }
+    }
+    fireEvent(this, "config-changed", { config: this._config });
+  }  
+  */
+ 
   private _valueChanged(ev): void {
     if (!this._config || !this.hass) {
       return;
@@ -420,6 +264,7 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
         };
       }
     }
+    console.log(`[${CARD_NAME}::this._valueChanged]: new config : ${debug(this._config)}`)
     fireEvent(this, 'config-changed', { config: this._config });
   }
 

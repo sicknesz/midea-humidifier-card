@@ -4,6 +4,9 @@
     "invalid_configuration": "Invalid configuration",
     "tank_is_full": "Caution : Water tank is full, please empty it",
     "change_airfilter": "Caution : Please change the air filter",
-    "defrosting": "Caution : Please wait, currently defrosting..."
+    "defrosting": "Caution : Please wait, currently defrosting...",
+    "tank": "Tank",
+    "filter": "Filter",
+    "defrost": "Defrost"
   }
 }

@@ -27,7 +27,7 @@ const plugins = [
     exclude: 'node_modules/**',
   }),
   dev && serve(serveopts),
-  !dev && terser(),
+  !dev && terser({ format: { comments: false } }),
 ];
 
 export default [
@@ -38,5 +38,5 @@ export default [
       format: 'es',
     },
     plugins: [...plugins],
-  },
+  }  
 ];

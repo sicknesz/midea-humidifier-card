@@ -4,6 +4,9 @@
     "invalid_configuration": "Configuration invalide",
     "tank_is_full": "Attention : Le réservoir est plein",
     "change_airfilter": "Attention : Changer le filtre à air",
-    "defrosting": "Attention : Dégivrage en cours..."
+    "defrosting": "Attention : Dégivrage en cours...",
+    "tank": "Réservoir",
+    "filter": "Filtre",
+    "defrost": "Dégivrage"
   }
 }
