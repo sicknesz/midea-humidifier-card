@@ -5,8 +5,10 @@ import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 import serve from 'rollup-plugin-serve';
 import json from '@rollup/plugin-json';
+import dotenv from 'dotenv';
 
 const dev = process.env.ROLLUP_WATCH;
+dotenv.config();
 
 const serveopts = {
   contentBase: ['./dist'],
@@ -18,7 +20,7 @@ const serveopts = {
   },
 };
 
-const plugins = [
+const plugins = [  
   nodeResolve({}),
   commonjs(),
   typescript(),
@@ -34,7 +36,15 @@ export default [
   {
     input: 'src/midea-humidifier-card.ts',
     output: {
-      dir: 'dist',
+      file: 'dist/midea-humidifier-card.js',
+      format: 'es',
+    },
+    plugins: [...plugins],
+  },
+  {
+    input: 'src/midea-humidifier-card-editor.ts',
+    output: {
+      file: 'dist/midea-humidifier-card-editor.js',
       format: 'es',
     },
     plugins: [...plugins],

@@ -34,40 +34,47 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 
 # Installation
 
-## Step 1
+## Install
 
-Save midea-humidifier-card to <config directory>/www/midea-humidifier-card/midea-humidifier-card.js on your Home Assistant instance.
+### Manual install
 
-Example:
-(replace /config with your path if different, it need to be the same folder where configuration.yaml is)
+1. Download and copy `midea-humidifier-card.js` from the [my repo](https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card.js) into your `config/www` directory.
 
-```
+2. Download and copy `midea-humidifier-card-editor.js` from the [my repo](https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-editor.js) into your `config/www` directory.
 
-# EDIT THIS LINE TO FIT YOUR SYSTEM
-export CONFIG_FOLDER = "/config
+3. Add the resource reference as decribed below.
 
-cd /tmp
+### CLI install
 
-wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card.js
+1. Move into your `config/www` directory.
 
-mkdir -p $CONFIG_FOLDER/www/community/midea-humidifier-card/
+2. Grab `midea-humidifier-card.js` and `midea-humidifier-card-editor.js`:
 
-mv ./*.js $CONFIG_FOLDER/www/community/midea-humidifier-card/
+  ```
+  wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card.js
+  wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-editor.js
+  ```
 
-```
+3. Add the resource reference as decribed below.
 
-## Step 2
+### Add resource reference
 
-Link midea-humidifier-card inside your ui-lovelace.yaml or Raw Editor in the UI Editor
+If you configure Lovelace via YAML, add a reference to `midea-humidifier-card.js` inside your `configuration.yaml`:
 
-resources:
+  ```yaml
+  resources:
+    - url: /hacsfiles/midea-humidifier-card.js?v=1.0.1
+      type: module
+  ```
 
-```
-- url: /hacsfiles/midea-humidifier-card.js
-  type: module
-```
+Else, if you prefer the graphical editor, use the menu to add the resource:
 
-## Step 3
+1. Make sure, advanced mode is enabled in your user profile (click on your user name to get there)
+2. Navigate to Configuration -> Lovelace Dashboards -> Resources Tab. Hit orange (+) icon
+3. Enter URL `/hacsfiles/midea-humidifier-card.js` and select type "JavaScript Module".
+4. Restart Home Assistant.
+
+## Usage
 
 Click to add an element to your lovelace view, select the midea-humidifier-card, it will open the visual card editor
 but everything should be autoconfigured properly unless you have more than one humidifier, in that case just manually click and set all fields in the editor.
@@ -91,15 +98,6 @@ tank_entity: binary_sensor.dehumidifier_<deviceID>_tank_full
 ion_entity: switch.dehumidifier_<deviceID>_ion_mode
 show_ion_toggle: true
 swap_target_and_current_humidity: true
-entities:
-  - humidifier.dehumidifier_<deviceID>
-  - sensor.dehumidifier_<deviceID>_humidity
-  - sensor.dehumidifier_<deviceID>_temperature
-  - fan.dehumidifier_<deviceID>_fan
-  - binary_sensor.dehumidifier_<deviceID>_tank_full
-  - binary_sensor.dehumidifier_<deviceID>_defrosting
-  - binary_sensor.dehumidifier_<deviceID>_replace_filter
-  - switch.dehumidifier_<deviceID>_ion_mode
 ```
 
 ## Options
@@ -117,13 +115,6 @@ entities:
 | defrost_entity                   | string  | **Optional** | Humidifiers defrost binary sensor entity    | `binary_sensor.<id>` |
 | show_ion_toggle                  | boolean | **Optional** | Display the ion toggle icon.                | true                 |
 | swap_target_and_current_humidity | boolean | **Optional** | Swap current and target humidity display    | true                 |
-| *entities*                       | array   | **Required** | All entities used in the card.              | ...                  |
-
-*entities* : We need this because most card are only meant for 1 entity, this one is NOT, it handles multiples entities,
-for this I use the helper function called `hasConfigOrEntitiesChanged` thats present in the frontend code but not as helper,
-I re-implemented it because the card uses it to know if*any entities* has changed meaning that without it clicking on a fan's speed would
-not update the UI until an action was taken on the main entity, so the yaml for this card is a bit longer that usual but it does the tricks
-If using the visual editor, the entities are autofilled
 
 ## Screenshots
 

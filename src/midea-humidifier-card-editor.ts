@@ -5,19 +5,14 @@ import { HomeAssistant, fireEvent, LovelaceCard, LovelaceCardEditor } from 'cust
 import { localize } from './localize/localize';
 
 import { HumidifierCardConfig } from './types';
-declare global {
-  interface HTMLElementTagNameMap {
-    'midea-humidifier-card-editor': LovelaceCardEditor;
-    'hui-error-card': LovelaceCard;
-  }
-}
+
 
 import { customElement, property, state } from 'lit/decorators';
 
 const CARD_NAME = "midea-humidifier-card-editor"
 
-const debug = input => JSON.stringify(input, null, 2)
-@customElement("midea-humidifier-card-editor")
+// const debug = input => JSON.stringify(input, null, 2)
+@customElement(CARD_NAME)
 export class MideaHumidifierCardEditor extends LitElement implements LovelaceCardEditor {
   @property({ attribute: false }) public hass?: HomeAssistant;
   @state() private _config?: HumidifierCardConfig;
@@ -25,7 +20,7 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
   private _initialized = false;
 
   public setConfig(config: HumidifierCardConfig): void {
-    console.warn(`[${CARD_NAME}::setConfig]: config : ${debug(config)}`)
+    // console.warn(`[${CARD_NAME}::setConfig]: config : ${debug(config)}`)
     this._config = config;
 
     this.loadCardHelpers();
@@ -264,7 +259,7 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
         };
       }
     }
-    console.log(`[${CARD_NAME}::this._valueChanged]: new config : ${debug(this._config)}`)
+    // console.log(`[${CARD_NAME}::this._valueChanged]: new config : ${debug(this._config)}`)
     fireEvent(this, 'config-changed', { config: this._config });
   }
 
@@ -298,5 +293,12 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
         padding-bottom: 8px;
       }
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    [CARD_NAME]: MideaHumidifierCardEditor;
+    'hui-error-card': LovelaceCard;
   }
 }

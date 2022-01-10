@@ -14,7 +14,7 @@ import {
   mdiFanSpeed3,
   mdiPower,
   mdiPowerCycle,
-  mdiSnowflake
+  mdiSnowflakeMelt
 } from "@mdi/js";
 // import "@thomasloven/round-slider";
 import { HassEntity, STATE_NOT_RUNNING } from "home-assistant-js-websocket";
@@ -274,13 +274,15 @@ console.info(
   description: 'Midea/Inventor Humidifier lovelace UI card',
 });
 
-// const debug = (input: any) => JSON.stringify(input, null ,2)
+
+
+const debug = (input: any) => JSON.stringify(input, null ,2)
 
 @customElement(CARD_NAME)
 export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   public static async getConfigElement(): Promise<HTMLElement> {
-    await import(`./${CARD_NAME}-editor`);
-    return document.createElement(`${CARD_NAME}-editor`);    
+    //await import(`./midea-humidifier-card-editor`);
+    return document.createElement(`midea-humidifier-card-editor`);    
   }
 
   public static getStubConfig(
@@ -299,7 +301,6 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     ) || [];
 
     
-
     if(!foundEntities || !foundEntities[0].includes(".")) {
       return {
         type: "'custom:midea-humidifier-card'",
@@ -312,8 +313,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         temperature_entity: ``,
         ion_entity: ``,
         swap_target_and_current_humidity: true,
-        show_ion_toggle: true,
-        entities: []        
+        show_ion_toggle: true
       }
     }
     
@@ -332,17 +332,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       temperature_entity: `sensor.${humidifierEntity}_temperature`,
       ion_entity: `switch.${humidifierEntity}_ion_mode`,
       swap_target_and_current_humidity: true,
-      show_ion_toggle: true,
-      entities: [
-        `humidifier.${humidifierEntity}`,
-        `fan.${humidifierEntity}_fan`,
-        `binary_sensor.${humidifierEntity}_tank_full`,
-        `binary_sensor.${humidifierEntity}_defrosting`,
-        `binary_sensor.${humidifierEntity}_replace_filter`,
-        `sensor.${humidifierEntity}_humidity`,
-        `sensor.${humidifierEntity}_temperature`,
-        `switch.${humidifierEntity}_ion_mode`,
-      ]
+      show_ion_toggle: true
     };
   }
   @property({ attribute: false }) public hass?: HomeAssistant;
@@ -365,10 +355,30 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       throw new Error("Specify a fan_entity from within the fan domain");
     }
     if (!config.humidity_entity || !config.temperature_entity) {
-      throw new Error("Humidity entity is required for this card to function properly");
+      throw new Error("Humidity and temperature sensors entity are required for this card to function properly");
     }     
-    // console.info(`[${CARD_NAME}::setConfig]: Got new config : ${debug(config)}`)
-    this._config = config;
+    console.info(`[${CARD_NAME}::setConfig]: Got new config : ${debug(config)}`)
+    this._config = this.autoWatchEntities(config);
+  }
+
+
+  private autoWatchEntities(config: HumidifierCardConfig) : HumidifierCardConfig {
+    console.info(`[${CARD_NAME}::autoWatchEntities]: dumping original config ${debug(config)}`)
+    const { entities = [] } = config
+    Object.keys(config).map(key => {
+      if(key.includes("entity")) {
+        console.info(`[${CARD_NAME}::autoWatchEntities]: found entity to add to entities[] ${config[key]}`)
+        if(!entities.includes(config[key])) {
+          entities.push(config[key])
+        }        
+      }
+    })
+    const newConfig = {
+      ...config,
+      entities
+    }    
+    console.info(`[${CARD_NAME}::autoWatchEntities]: dumping modified newConfig ${debug(newConfig)}`)
+    return newConfig
   }
 
   private _lower(string: string) {
@@ -664,7 +674,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
                 ? html`<ha-icon-button
                   class=${classMap({ "defrost-icon": problems!.defrost })}
                   tabindex="0"                  
-                  .path=${mdiSnowflake}
+                  .path=${mdiSnowflakeMelt}
                   .label=${"Defrost"}                
                   ></ha-icon-button>` : html``} 
             </div>
