@@ -36,16 +36,9 @@ export default [
   {
     input: 'src/midea-humidifier-card.ts',
     output: {
-      file: 'dist/midea-humidifier-card.js',
+      dir: 'dist',
       format: 'es',
-    },
-    plugins: [...plugins],
-  },
-  {
-    input: 'src/midea-humidifier-card-editor.ts',
-    output: {
-      file: 'dist/midea-humidifier-card-editor.js',
-      format: 'es',
+      inlineDynamicImports: true,     
     },
     plugins: [...plugins],
   }  

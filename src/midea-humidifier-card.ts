@@ -281,7 +281,7 @@ const debug = (input: any) => JSON.stringify(input, null ,2)
 @customElement(CARD_NAME)
 export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   public static async getConfigElement(): Promise<HTMLElement> {
-    //await import(`./midea-humidifier-card-editor`);
+    await import(`./midea-humidifier-card-editor`);
     return document.createElement(`midea-humidifier-card-editor`);    
   }
 
