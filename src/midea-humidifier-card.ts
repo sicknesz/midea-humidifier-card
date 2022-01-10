@@ -260,7 +260,7 @@ const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
 }
 
 const CARD_NAME = "midea-humidifier-card";
-const version  = "1.0.2";
+const version  = "1.0.3";
 
 console.info(
   `%c ${CARD_NAME} %c ${version}`,
@@ -275,8 +275,7 @@ console.info(
 });
 
 
-
-const debug = (input: any) => JSON.stringify(input, null ,2)
+// const debug = (input: any) => JSON.stringify(input, null ,2)
 
 @customElement(CARD_NAME)
 export class MideaHumidifierCard extends LitElement implements LovelaceCard {
@@ -357,17 +356,17 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     if (!config.humidity_entity || !config.temperature_entity) {
       throw new Error("Humidity and temperature sensors entity are required for this card to function properly");
     }     
-    console.info(`[${CARD_NAME}::setConfig]: Got new config : ${debug(config)}`)
+    // console.info(`[${CARD_NAME}::setConfig]: Got new config : ${debug(config)}`)
     this._config = this.autoWatchEntities(config);
   }
 
 
   private autoWatchEntities(config: HumidifierCardConfig) : HumidifierCardConfig {
-    console.info(`[${CARD_NAME}::autoWatchEntities]: dumping original config ${debug(config)}`)
+    // console.info(`[${CARD_NAME}::autoWatchEntities]: dumping original config ${debug(config)}`)
     const { entities = [] } = config
     Object.keys(config).map(key => {
       if(key.includes("entity")) {
-        console.info(`[${CARD_NAME}::autoWatchEntities]: found entity to add to entities[] ${config[key]}`)
+        // console.info(`[${CARD_NAME}::autoWatchEntities]: found entity to add to entities[] ${config[key]}`)
         if(!entities.includes(config[key])) {
           entities.push(config[key])
         }        
@@ -377,7 +376,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       ...config,
       entities
     }    
-    console.info(`[${CARD_NAME}::autoWatchEntities]: dumping modified newConfig ${debug(newConfig)}`)
+    // console.info(`[${CARD_NAME}::autoWatchEntities]: dumping modified newConfig ${debug(newConfig)}`)
     return newConfig
   }
 

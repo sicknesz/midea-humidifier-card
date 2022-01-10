@@ -40,19 +40,16 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 
 1. Download and copy `midea-humidifier-card.js` from the [my repo](https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card.js) into your `config/www` directory.
 
-2. Download and copy `midea-humidifier-card-editor.js` from the [my repo](https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-editor.js) into your `config/www` directory.
-
-3. Add the resource reference as decribed below.
+2. Add the resource reference as decribed below.
 
 ### CLI install
 
 1. Move into your `config/www` directory.
 
-2. Grab `midea-humidifier-card.js` and `midea-humidifier-card-editor.js`:
+2. Grab `midea-humidifier-card.js`:
 
   ```
   wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card.js
-  wget https://raw.githubusercontent.com/sicknesz/midea-inventor-card/master/dist/midea-humidifier-card-editor.js
   ```
 
 3. Add the resource reference as decribed below.
@@ -63,7 +60,7 @@ If you configure Lovelace via YAML, add a reference to `midea-humidifier-card.js
 
   ```yaml
   resources:
-    - url: /hacsfiles/midea-humidifier-card.js?v=1.0.1
+    - url: /hacsfiles/midea-humidifier-card.js?v=1.0.3
       type: module
   ```
 
