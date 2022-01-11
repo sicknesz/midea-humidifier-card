@@ -260,7 +260,7 @@ const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
 }
 
 const CARD_NAME = "midea-humidifier-card";
-const version  = "1.0.3";
+const version  = "1.0.4";
 
 console.info(
   `%c ${CARD_NAME} %c ${version}`,
@@ -303,7 +303,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     if(!foundEntities || !foundEntities[0].includes(".")) {
       return {
         type: "'custom:midea-humidifier-card'",
-        entity: "",
+        entity: ``,
         fan_entity: ``,
         tank_entity: ``,
         defrost_entity: ``,
@@ -322,7 +322,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     // zeroconf editor entities autofill
     return { 
       type: "custom:midea-humidifier-card",
-      entity: `humidifier.${humidifierEntity}` || "",
+      entity: `humidifier.${humidifierEntity}`,
       fan_entity: `fan.${humidifierEntity}_fan`,
       tank_entity: `binary_sensor.${humidifierEntity}_tank_full`,
       defrost_entity: `binary_sensor.${humidifierEntity}_defrosting`,

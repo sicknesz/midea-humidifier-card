@@ -91,6 +91,7 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
     const sensorDomains = ["sensor"];
     const fanDomains = ["fan"];
     const binarySensorDomains = ["binary_sensor"];
+    const switchDomains = ["switch"];
 
     return html`
       <div class="card-config">
@@ -154,6 +155,19 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
           @change=${this._valueChanged}
           allow-custom-entity
         ></ha-entity-picker>
+        <ha-entity-picker
+          .label="${this.hass.localize(
+            "ui.panel.lovelace.editor.card.generic.entity"
+          )} (${this.hass.localize(
+            "ui.panel.lovelace.editor.card.config.required"
+          )}) - ION Switch"
+          .hass=${this.hass}
+          .value=${this._ion_entity}
+          .configValue=${"ion_entity"}
+          .includeDomains=${switchDomains}
+          @change=${this._valueChanged}
+          allow-custom-entity
+        ></ha-entity-picker>        
         <ha-entity-picker
           .label="${this.hass.localize(
             "ui.panel.lovelace.editor.card.generic.entity"

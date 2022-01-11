@@ -110,7 +110,8 @@ swap_target_and_current_humidity: true
 | tank_entity                      | string  | **Optional** | Humidifiers tank binary sensor entity       | `binary_sensor.<id>` |
 | filter_entity                    | string  | **Optional** | Humidifiers filter binary sensor entity     | `binary_sensor.<id>` |
 | defrost_entity                   | string  | **Optional** | Humidifiers defrost binary sensor entity    | `binary_sensor.<id>` |
-| show_ion_toggle                  | boolean | **Optional** | Display the ion toggle icon.                | true                 |
+| ion_entity                       | string  | **Optional** | Humidifiers ion switch entity               | `switch.<id>`        |
+| show_ion_toggle                  | boolean | **Optional** | Display the ion switch toggle icon.         | true                 |
 | swap_target_and_current_humidity | boolean | **Optional** | Swap current and target humidity display    | true                 |
 
 ## Screenshots
