@@ -968,7 +968,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       }      
 
       #modes .ion-icon {
-        color: var(--secondary-text-color);
+        color: var(--mode-color);
       }        
 
       text {
