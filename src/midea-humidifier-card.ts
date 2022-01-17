@@ -260,7 +260,7 @@ const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
 }
 
 const CARD_NAME = "midea-humidifier-card";
-const version  = "1.0.4";
+const version  = "1.0.5";
 
 console.info(
   `%c ${CARD_NAME} %c ${version}`,
