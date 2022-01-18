@@ -683,7 +683,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
                   class=${classMap({ "ion-icon": (ionStateObj!.state === 'on') })}
                   tabindex="0"  
                   @click=${this._handleToggleIonModeAction}                
-                  .path=${mdiAirPurifier}
+                  .path=${(ionStateObj!.state === 'on') ? mdiAirPurifier : mdiAirHumidifierOff}
                   .label=${"Ion"}                
                   ></ha-icon-button>` : html``}                
               ${(fanStateObj?.attributes?.preset_modes || [])
