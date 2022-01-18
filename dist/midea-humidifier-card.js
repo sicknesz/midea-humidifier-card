@@ -114,7 +114,7 @@ function t(t,e,i,n){var s,o=arguments.length,r=o<3?e:null===n?n=Object.getOwnPro
             <div id="modes">
               ${(h.attributes.available_modes||[]).concat().sort(Vt).map((t=>this._renderIcon(t,p,y)))}
               ${(null==M?void 0:M.defrost)?R`<ha-icon-button
-                  class=${dt({"defrost-icon":M.defrost})}
+                  class=${dt({"defrost-icon":M.defrost&&!y})}
                   tabindex="0"                  
                   .path=${"M8 17.85C8 19.04 7.11 20 6 20S4 19.04 4 17.85C4 16.42 6 14 6 14S8 16.42 8 17.85M16.46 12V10.56L18.46 9.43L20.79 10.05L21.31 8.12L19.54 7.65L20 5.88L18.07 5.36L17.45 7.69L15.45 8.82L13 7.38V5.12L14.71 3.41L13.29 2L12 3.29L10.71 2L9.29 3.41L11 5.12V7.38L8.5 8.82L6.5 7.69L5.92 5.36L4 5.88L4.47 7.65L2.7 8.12L3.22 10.05L5.55 9.43L7.55 10.56V12H2V13H22V12H16.46M9.5 12V10.56L12 9.11L14.5 10.56V12H9.5M20 17.85C20 19.04 19.11 20 18 20S16 19.04 16 17.85C16 16.42 18 14 18 14S20 16.42 20 17.85M14 20.85C14 22.04 13.11 23 12 23S10 22.04 10 20.85C10 19.42 12 17 12 17S14 19.42 14 20.85Z"}
                   .label=${"Defrost"}                
@@ -122,7 +122,7 @@ function t(t,e,i,n){var s,o=arguments.length,r=o<3?e:null===n?n=Object.getOwnPro
             </div>
             <div id="modes">
               ${!0===(null===(a=this._config)||void 0===a?void 0:a.show_ion_toggle)?R`<ha-icon-button
-                  class=${dt({"ion-icon":"on"===f.state})}
+                  class=${dt({"ion-icon":"on"===f.state&&!y})}
                   tabindex="0"  
                   @click=${this._handleToggleIonModeAction}                
                   .path=${"on"===f.state?"M11,9A4,4 0 0,1 15,13A4,4 0 0,1 11,17A4,4 0 0,1 7,13A4,4 0 0,1 11,9M11,11A2,2 0 0,0 9,13A2,2 0 0,0 11,15A2,2 0 0,0 13,13A2,2 0 0,0 11,11M7,4H14A4,4 0 0,1 18,8V9H16V8A2,2 0 0,0 14,6H7A2,2 0 0,0 5,8V20H16V18H18V22H3V8A4,4 0 0,1 7,4M16,11C18.5,11 18.5,9 21,9V11C18.5,11 18.5,13 16,13V11M16,15C18.5,15 18.5,13 21,13V15C18.5,15 18.5,17 16,17V15Z":e}
@@ -134,7 +134,9 @@ function t(t,e,i,n){var s,o=arguments.length,r=o<3?e:null===n?n=Object.getOwnPro
             ${S}
           </div>
         </div>
-        ${L?this._getWarningText(M):R``}
+        <div id="warnings">
+          ${L?this._getWarningText(M):R``}
+        </div> 
       </ha-card>
     `}shouldUpdate(t){return function(t,e){if(function(t,e){if(e.has("_config"))return!0;const i=e.get("hass");return!i||i.connected!==t.hass.connected||i.themes!==t.hass.themes||i.locale!==t.hass.locale||i.localize!==t.hass.localize||i.config.state!==t.hass.config.state}(t,e))return!0;const i=e.get("hass");return Nt(t._config.entities,!1).some((e=>"entity"in e&&i.states[e.entity]!==t.hass.states[e.entity]))}(this,t)}updated(t){if(super.updated(t),!this._config||!this.hass||!t.has("hass")&&!t.has("_config"))return;const e=t.get("hass"),i=t.get("_config");e&&i&&e.themes===this.hass.themes&&i.theme===this._config.theme||function(t,e,i,n){void 0===n&&(n=!1),t._themes||(t._themes={});var s=e.default_theme;("default"===i||i&&e.themes[i])&&(s=i);var o=wt({},t._themes);if("default"!==s){var r=e.themes[s];Object.keys(r).forEach((function(e){var i="--"+e;t._themes[i]="",o[i]=r[e]}))}if(t.updateStyles?t.updateStyles(o):window.ShadyCSS&&window.ShadyCSS.styleSubtree(t,o),n){var a=document.querySelector("meta[name=theme-color]");if(a){a.hasAttribute("default-content")||a.setAttribute("default-content",a.getAttribute("content"));var l=o["--primary-color"]||a.getAttribute("default-content");a.setAttribute("content",l)}}}(this,this.hass.themes,this._config.theme);const n=this.hass.states[this._config.entity];if(!n)return;const s=this.hass.states[this._config.fan_entity];s&&(e&&e.states[this._config.entity]===n&&e.states[this._config.fan_entity]===s||this._rescale_svg())}willUpdate(t){if(!this.hass||!this._config||!t.has("hass"))return;const e=this.hass.states[this._config.entity];if(!e)return;const i=this.hass.states[this._config.humidity_entity];if(!i)return;const n=t.get("hass");n&&n.states[this._config.entity]===e||(this._targetHumidity=this._getTargetHumidity(e)),n&&n.states[this._config.humidity_entity]===e||(this._currentHumidity=this._getCurrentHumidity(i))}_rescale_svg(){this.shadowRoot&&this.shadowRoot.querySelector("ha-card")&&this.shadowRoot.querySelector("ha-card").updateComplete.then((()=>{const t=this.shadowRoot.querySelector("#set-values"),e=t.querySelector("g").getBBox();t.setAttribute("viewBox",`${e.x} ${e.y} ${e.width} ${e.height}`),t.setAttribute("width",`${e.width}`),t.setAttribute("height",`${e.height}`)}))}_getTargetHumidity(t){if(!Ut.includes(t.state))return t.attributes.humidity}_dragEvent(t){this._targetHumidity=t.detail.value}_setTargetHumidity(t){this.hass.callService("humidifier","set_humidity",{entity_id:this._config.entity,humidity:t.detail.value})}_getCurrentHumidity(t){if(!Ut.includes(t.state)&&!isNaN(parseFloat(t.state)))return parseFloat(t.state)}_handleMoreInfo(){Ht(this,"hass-more-info",{entityId:this._config.entity})}static get styles(){return u`
       :host {
@@ -240,6 +242,10 @@ function t(t,e,i,n){var s,o=arguments.length,r=o<3?e:null===n?n=Object.getOwnPro
       #set-mode {
         fill: var(--secondary-text-color);
         font-size: 16px;
+      }
+
+      #warnings {
+        padding: 16px;
       }
 
       #info {

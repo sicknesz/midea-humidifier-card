@@ -12,25 +12,17 @@
 A companion card to the Midea Humidifier Lan integration that added tons of options comparing to previous integrations, so much that the classic
 humidifier card was kinda lacking alot, so i made this card specifically for that (Midea/Inventor EVA Pro (De)Humifidier Appliances)
 
-## Working
+## Changelogs
 
-1. Control of all applicances mode (Set, Smart, Continuous, Dry)
-2. Control the 3 preset mode for the fan (Silent, Medium, Turbo)
-3. Warn user when tank is full, defrost is happening or filter needs to be change/installed
-4. Swappable current and target humidity for more consistence with the thermostat card
-5. Toggle for ion button display
-6. Localized
-7. Editor is working and should normally autofill everything for you
+*v1.0.6* - Latest current version - Updated readme.md
 
-## TODO
+*v1.0.5* - Changed the ion icon color to match all others (current mode color)
 
-1. ~~add a toggle ion icon button~~
-2. ~~add the 2 others possible cause of warning (defrosting, air filter need to be changed)~~
-3. ~~Fix any bugs left~~
-4. ~~swappable current and target humidity display~~
-5. ~~better icons~~
-6. ~~Write the cards editor~~
-7. ~~code is more robust~~
+*v1.0.3* - Added missing ion_entity from card editor and autoconfig
+
+*v1.0.2* - Added card editor, single file output and handling of all warning (defrost, tank_full, filter)
+
+*v1.0.1* - Added power buttons, all fan preset modes and ion toggle
 
 # Installation
 
@@ -60,7 +52,7 @@ If you configure Lovelace via YAML, add a reference to `midea-humidifier-card.js
 
   ```yaml
   resources:
-    - url: /hacsfiles/midea-humidifier-card.js?v=1.0.3
+    - url: /hacsfiles/midea-humidifier-card.js?v=1.0.6
       type: module
   ```
 

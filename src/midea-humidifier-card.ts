@@ -1,6 +1,24 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+// process.traceDeprecation = true;
+const CARD_NAME = "midea-humidifier-card";
+const version  = "1.0.6";
+
+console.info(
+  `%c ${CARD_NAME} %c ${version}`,
+  'color: cyan; background: black; font-weight: bold;',
+  'color: darkblue; background: white; font-weight: bold;',
+);
+(window as any).customCards = (window as any).customCards || [];
+(window as any).customCards.push({
+  type: CARD_NAME,
+  name: 'Midea Humidifier Card',
+  description: 'Midea/Inventor Humidifier lovelace UI card',
+});
+
+
 import {  
   mdiAutorenew,
   mdiAirHumidifier,
@@ -258,22 +276,6 @@ const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
   medium: mdiFanSpeed2,
   turbo: mdiFanSpeed3
 }
-
-const CARD_NAME = "midea-humidifier-card";
-const version  = "1.0.5";
-
-console.info(
-  `%c ${CARD_NAME} %c ${version}`,
-  'color: cyan; background: black; font-weight: bold;',
-  'color: darkblue; background: white; font-weight: bold;',
-);
-(window as any).customCards = (window as any).customCards || [];
-(window as any).customCards.push({
-  type: CARD_NAME,
-  name: 'Midea Humidifier Card',
-  description: 'Midea/Inventor Humidifier lovelace UI card',
-});
-
 
 // const debug = (input: any) => JSON.stringify(input, null ,2)
 
@@ -671,7 +673,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
                 .map((modeItem) => this._renderIcon(modeItem, currentMode, isPoweredOff))}
               ${problems?.defrost 
                 ? html`<ha-icon-button
-                  class=${classMap({ "defrost-icon": problems!.defrost })}
+                  class=${classMap({ "defrost-icon": (problems!.defrost&& !isPoweredOff) })}
                   tabindex="0"                  
                   .path=${mdiSnowflakeMelt}
                   .label=${"Defrost"}                
@@ -680,7 +682,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             <div id="modes">
               ${(this._config?.show_ion_toggle === true)
                 ? html`<ha-icon-button
-                  class=${classMap({ "ion-icon": (ionStateObj!.state === 'on') })}
+                  class=${classMap({ "ion-icon": (ionStateObj!.state === 'on'&& !isPoweredOff) })}
                   tabindex="0"  
                   @click=${this._handleToggleIonModeAction}                
                   .path=${(ionStateObj!.state === 'on') ? mdiAirPurifier : mdiAirHumidifierOff}
@@ -695,7 +697,9 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             ${name}
           </div>
         </div>
-        ${hasIssues ? this._getWarningText(problems) : html``}
+        <div id="warnings">
+          ${hasIssues ? this._getWarningText(problems) : html``}
+        </div> 
       </ha-card>
     `;
   }
@@ -942,6 +946,10 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       #set-mode {
         fill: var(--secondary-text-color);
         font-size: 16px;
+      }
+
+      #warnings {
+        padding: 16px;
       }
 
       #info {
