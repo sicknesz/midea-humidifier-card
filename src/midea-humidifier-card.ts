@@ -4,7 +4,7 @@
 
 // process.traceDeprecation = true;
 const CARD_NAME = "midea-humidifier-card";
-const version  = "1.0.6";
+const version  = "1.0.7";
 
 console.info(
   `%c ${CARD_NAME} %c ${version}`,
@@ -273,8 +273,10 @@ const powerIcons: { [status in PowerStatus]: string } = {
 
 const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
   silent: mdiFanSpeed1,
+  low: mdiFanSpeed1,
   medium: mdiFanSpeed2,
-  turbo: mdiFanSpeed3
+  turbo: mdiFanSpeed3,
+  high: mdiFanSpeed3
 }
 
 // const debug = (input: any) => JSON.stringify(input, null ,2)

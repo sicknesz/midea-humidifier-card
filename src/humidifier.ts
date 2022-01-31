@@ -15,9 +15,11 @@ export type HumidifierMode =
   | "dry";
 
 export type HumidifierFanMode =
+  | "low"
   | "silent"
   | "medium"
   | "turbo"
+  | "high"
 
 export type HumidifierProblems =
   | "TankIsFull"
@@ -58,9 +60,11 @@ export const HUMIDIFIER_DEVICE_CLASS_HUMIDIFIER = "humidifier";
 export const HUMIDIFIER_DEVICE_CLASS_DEHUMIDIFIER = "dehumidifier";
 
 const humidifierFanModeOrdering: { [key in HumidifierFanMode]: number } = {
+  low: 0,
   silent: 0,
   medium: 1,
-  turbo: 2
+  turbo: 2,
+  high: 2
 };
 
 const humidifierModeOrdering: { [key in HumidifierMode]: number } = {

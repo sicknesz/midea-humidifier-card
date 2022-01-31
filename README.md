@@ -14,7 +14,9 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 
 ## Changelogs
 
-*v1.0.6* - Latest current version - Updated readme.md
+*v1.0.7* - Latest current version - Fixed fan mode name change in homeassistant-midea-air-appliances-lan v0.6.0
+
+*v1.0.6* - Updated readme.md
 
 *v1.0.5* - Changed the ion icon color to match all others (current mode color)
 
@@ -27,6 +29,16 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 # Installation
 
 ## Install
+
+### HACS Install
+
+1. Go to the section frontend.
+2. Click on the 3 dots in the top right corner.
+3. Select "Custom repositories"
+4. Add the [URL](https://github.com/sicknesz/midea-humidifier-card/) to the repository.
+5. Select the correct category (lovelace)
+6. Click the "ADD" button.
+7. Install
 
 ### Manual install
 
