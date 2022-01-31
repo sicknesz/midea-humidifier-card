@@ -1,13 +1,14 @@
 # Midea Humidifier Card
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/midea-inventor-card/midea-humidifier-card.svg?style=for-the-badge
-[commits]: https://github.com/sickneszmidea-inventor-card/commits/master
+[commits-shield]: https://img.shields.io/github/commit-activity/y/midea-humidifier-card/midea-humidifier-card.svg?style=for-the-badge
+[commits]: https://github.com/sicknesz/midea-humidifier-card/commits/master
 [devcontainer]: https://code.visualstudio.com/docs/remote/containers
 [forum]: https://community.home-assistant.io/c/projects/frontend
-[license-shield]: https://img.shields.io/github/license/midea-inventor-card/midea-humidifier-card.svg?style=for-the-badge
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2021.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/midea-inventor-card/midea-humidifier-card.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/midea-humidifier-card/midea-humidifier-card.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2022.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/midea-humidifier-card/midea-humidifier-card.svg?style=for-the-badge
 [releases]: https://github.com/sicknesz/midea-humidifier-card/releases
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
 A companion card to the Midea Humidifier Lan integration that added tons of options comparing to previous integrations, so much that the classic
 humidifier card was kinda lacking alot, so i made this card specifically for that (Midea/Inventor EVA Pro (De)Humifidier Appliances)
@@ -64,7 +65,7 @@ If you configure Lovelace via YAML, add a reference to `midea-humidifier-card.js
 
   ```yaml
   resources:
-    - url: /hacsfiles/midea-humidifier-card.js?v=1.0.6
+    - url: /hacsfiles/midea-humidifier-card.js?v=1.0.7
       type: module
   ```
 

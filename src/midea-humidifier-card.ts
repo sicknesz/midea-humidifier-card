@@ -14,8 +14,8 @@ console.info(
 (window as any).customCards = (window as any).customCards || [];
 (window as any).customCards.push({
   type: CARD_NAME,
-  name: 'Midea Humidifier Card',
-  description: 'Midea/Inventor Humidifier lovelace UI card',
+  name: 'Midea (De)humidifier Card',
+  description: 'Midea/Inventor (De)humidifier lovelace UI card',
 });
 
 
