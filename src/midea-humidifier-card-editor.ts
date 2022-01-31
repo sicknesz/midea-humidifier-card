@@ -158,9 +158,7 @@ export class MideaHumidifierCardEditor extends LitElement implements LovelaceCar
         <ha-entity-picker
           .label="${this.hass.localize(
             "ui.panel.lovelace.editor.card.generic.entity"
-          )} (${this.hass.localize(
-            "ui.panel.lovelace.editor.card.config.required"
-          )}) - ION Switch"
+          )} - ION Switch"
           .hass=${this.hass}
           .value=${this._ion_entity}
           .configValue=${"ion_entity"}
