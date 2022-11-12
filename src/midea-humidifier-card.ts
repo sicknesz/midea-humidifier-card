@@ -612,7 +612,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             this._currentHumidity === null
               ? ""
               : svg`
-                    ${swapTargetAndCurrent ? this._targetHumidity?.toFixed() : this._currentHumidity.toFixed()}% - ${currentTemperatureString ? currentTemperature : ""} ${unitOfMeasurement}
+                    ${swapTargetAndCurrent ? this._targetHumidity?.toFixed() : this._currentHumidity.toFixed()}% - ${currentTemperatureString ? currentTemperature : ""}${unitOfMeasurement}
                     `
           }
         </text>
