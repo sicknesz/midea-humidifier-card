@@ -74,7 +74,7 @@ function t(t,e,i,n){var s,o=arguments.length,r=o<3?e:null===n?n=Object.getOwnPro
       <g>
         <text text-anchor="middle" class="set-value">
         ${Dt.includes(y)||void 0===this._currentHumidity||null===this._currentHumidity?"":j`
-                    ${H?null===(l=this._targetHumidity)||void 0===l?void 0:l.toFixed():this._currentHumidity.toFixed()}% - ${C?A:""} ${w}
+                    ${H?null===(l=this._targetHumidity)||void 0===l?void 0:l.toFixed():this._currentHumidity.toFixed()}% - ${C?A:""}${w}
                     `}
         </text>
         <text
