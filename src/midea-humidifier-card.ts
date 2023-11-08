@@ -533,6 +533,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     const isPoweredOff  = !!(currentPowerStatus === "off")
     const currentTemperatureString = this.hass.states[this._config.temperature_entity].state;
     const currentTemperature = parseFloat(currentTemperatureString) as number;
+    const unitOfMeasurement = this.hass.states[this._config.temperature_entity].attributes?.unit_of_measurement ?? '°C';
 
     if (!stateObj) {
       return html`
@@ -611,7 +612,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             this._currentHumidity === null
               ? ""
               : svg`
-                    ${swapTargetAndCurrent ? this._targetHumidity?.toFixed() : this._currentHumidity.toFixed()}% - ${currentTemperatureString ? currentTemperature : ""}°C
+                    ${swapTargetAndCurrent ? this._targetHumidity?.toFixed() : this._currentHumidity.toFixed()}% - ${currentTemperatureString ? currentTemperature : ""}${unitOfMeasurement}
                     `
           }
         </text>
