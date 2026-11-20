@@ -1,6 +1,6 @@
 {
   "name": "midea-dehumidifier-card",
-  "version": "1.4.1",
+  "version": "1.0.9",
   "description": "Lovelace midea-dehumidifier-card",
   "keywords": [
     "home-assistant",

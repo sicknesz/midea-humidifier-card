@@ -10,6 +10,7 @@ declare global {
 
 // TODO Add your configuration elements here for type-checking
 export interface HumidifierCardConfig extends LovelaceCardConfig {
+  entities: string[];
   entity: string;
   fan_entity: string;
   tank_entity: string;

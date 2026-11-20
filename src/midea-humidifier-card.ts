@@ -2,9 +2,8 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// process.traceDeprecation = true;
 const CARD_NAME = "midea-humidifier-card";
-const version  = "1.0.7";
+const version = "1.0.9";
 
 console.info(
   `%c ${CARD_NAME} %c ${version}`,
@@ -18,8 +17,15 @@ console.info(
   description: 'Midea/Inventor (De)humidifier lovelace UI card',
 });
 
+declare global {
+  interface HTMLElementTagNameMap {
+    [CARD_NAME]: MideaHumidifierCard;
+  }
+}
 
-import {  
+
+
+import {
   mdiAutorenew,
   mdiAirHumidifier,
   mdiAirHumidifierOff,
@@ -34,7 +40,7 @@ import {
   mdiPowerCycle,
   mdiSnowflakeMelt
 } from "@mdi/js";
-// import "@thomasloven/round-slider";
+import "@thomasloven/round-slider";
 import { HassEntity, STATE_NOT_RUNNING } from "home-assistant-js-websocket";
 import { localize } from "./localize/localize";
 import {
@@ -48,15 +54,15 @@ import {
 } from "lit";
 import { customElement, property, state } from "lit/decorators";
 import { classMap } from "lit/directives/class-map";
-import { 
-  HomeAssistant, 
-  LovelaceCard, 
+import {
+  HomeAssistant,
+  LovelaceCard,
   // LovelaceCardEditor,
   applyThemesOnElement,
-  fireEvent, 
-  EntityConfig, 
-  computeRTLDirection, 
-  computeDomain,  
+  fireEvent,
+  EntityConfig,
+  computeRTLDirection,
+  computeDomain,
 } from 'custom-card-helpers';
 
 import {
@@ -152,10 +158,10 @@ export const computeObjectId = (entityId: string): string => entityId.substr(ent
 const validEntityId = /^(\w+)\.(\w+)$/;
 
 export const isValidEntityId = (entityId: string) => validEntityId.test(entityId);
-  
+
 
 export const processConfigEntities = <
-  T extends EntityConfig | LovelaceRowConfig
+  T extends EntityConfig | LovelaceRowConfig & { type: string }
 >(
   entities: Array<T | string>,
   checkEntityId = true
@@ -190,8 +196,7 @@ export const processConfigEntities = <
 
     if (checkEntityId && !isValidEntityId((config as EntityConfig).entity!)) {
       throw new Error(
-        `Invalid entity ID at position ${index}: ${
-          (config as EntityConfig).entity
+        `Invalid entity ID at position ${index}: ${(config as EntityConfig).entity
         }`
       );
     }
@@ -248,10 +253,10 @@ const createEntityNotFoundWarning = (
 ) =>
   hass.config.state !== STATE_NOT_RUNNING
     ? hass.localize(
-        "ui.panel.lovelace.warning.entity_not_found",
-        "entity",
-        entityId || "[empty]"
-      )
+      "ui.panel.lovelace.warning.entity_not_found",
+      "entity",
+      entityId || "[empty]"
+    )
     : hass.localize("ui.panel.lovelace.warning.starting");
 
 const UNAVAILABLE = "unavailable";
@@ -268,7 +273,7 @@ const modeIcons: { [mode in HumidifierMode]: string } = {
 
 const powerIcons: { [status in PowerStatus]: string } = {
   off: mdiPower,
-  on:  mdiPowerCycle /* mdiPower*/, // colored version
+  on: mdiPowerCycle /* mdiPower*/, // colored version
 };
 
 const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
@@ -285,7 +290,7 @@ const fanModeIcons: { [fanMode in HumidifierFanMode]: string } = {
 export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   public static async getConfigElement(): Promise<HTMLElement> {
     await import(`./midea-humidifier-card-editor`);
-    return document.createElement(`midea-humidifier-card-editor`);    
+    return document.createElement(`midea-humidifier-card-editor`);
   }
 
   public static getStubConfig(
@@ -303,8 +308,8 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       includeDomains
     ) || [];
 
-    
-    if(!foundEntities || !foundEntities[0].includes(".")) {
+
+    if (!foundEntities || !foundEntities[0].includes(".")) {
       return {
         type: "'custom:midea-humidifier-card'",
         entity: ``,
@@ -319,12 +324,12 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         show_ion_toggle: true
       }
     }
-    
+
     const humidifierEntity = foundEntities[0].split(".")[1]
     // console.info(`[${CARD_NAME}::getStubConfig]: trying to prefill config automatically, found entity: ${humidifierEntity}`)
-      
+
     // zeroconf editor entities autofill
-    return { 
+    return {
       type: "custom:midea-humidifier-card",
       entity: `humidifier.${humidifierEntity}`,
       fan_entity: `fan.${humidifierEntity}_fan`,
@@ -359,27 +364,27 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     }
     if (!config.humidity_entity || !config.temperature_entity) {
       throw new Error("Humidity and temperature sensors entity are required for this card to function properly");
-    }     
+    }
     // console.info(`[${CARD_NAME}::setConfig]: Got new config : ${debug(config)}`)
     this._config = this.autoWatchEntities(config);
   }
 
 
-  private autoWatchEntities(config: HumidifierCardConfig) : HumidifierCardConfig {
+  private autoWatchEntities(config: HumidifierCardConfig): HumidifierCardConfig {
     // console.info(`[${CARD_NAME}::autoWatchEntities]: dumping original config ${debug(config)}`)
     const { entities = [] } = config
     Object.keys(config).map(key => {
-      if(key.includes("entity")) {
+      if (key.includes("entity")) {
         // console.info(`[${CARD_NAME}::autoWatchEntities]: found entity to add to entities[] ${config[key]}`)
-        if(!entities.includes(config[key])) {
+        if (!entities.includes(config[key])) {
           entities.push(config[key])
-        }        
+        }
       }
     })
     const newConfig = {
       ...config,
       entities
-    }    
+    }
     // console.info(`[${CARD_NAME}::autoWatchEntities]: dumping modified newConfig ${debug(newConfig)}`)
     return newConfig
   }
@@ -394,10 +399,10 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       return html``;
     }
 
-    const isSelected  = !!(currentPowerStatus === currentStatus)
+    const isSelected = !!(currentPowerStatus === currentStatus)
 
     // //// console.info(`[Humidifier-card]: fan icon : _renderPowerIcon : ${currentPowerStatus} current : ${currentStatus} isSelected: ${isSelected}`)
-    
+
     return html`
       <ha-icon-button
         class=${classMap({ "selected-icon": isSelected })}
@@ -432,7 +437,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
       >
       </ha-icon-button>
     `;
-  }  
+  }
 
   private _renderIcon(mode: string, currentMode: string, poweredOff: boolean): TemplateResult {
 
@@ -476,7 +481,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     this.hass!.callService("switch", "toggle", {
       entity_id: this._config!.ion_entity
     });
-  }  
+  }
 
   private _handleAction(e: MouseEvent): void {
     //// console.info(`[Humidifier-card]: calling service humidifier.set_mode with value ${(e.currentTarget as any).mode}`)
@@ -487,12 +492,12 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
   }
 
 
-  private _getWarningText(problems: ProblemConfig): TemplateResult {    
+  private _getWarningText(problems: ProblemConfig): TemplateResult {
     return html`<div>
       ${problems.tank ? html`<hui-warning>${localize("common.tank_is_full")}</hui-warning>` : html``}
       ${problems.defrost ? html`<hui-warning>${localize("common.defrosting")}</hui-warning>` : html``}
       ${problems.filter ? html`<hui-warning>${localize("common.change_airfilter")}</hui-warning>` : html``}
-    </div>`    
+    </div>`
   }
 
 
@@ -503,16 +508,16 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     ), nestedObj)
   }
 
-  private _readHassState(configEntry: string) : HassEntity | undefined {
-    const stateEntry : boolean | undefined = this._get(this,["_config", configEntry])
+  private _readHassState(configEntry: string): HassEntity | undefined {
+    const stateEntry: boolean | undefined = this._get(this, ["_config", configEntry])
     // console.log(`[${CARD_NAME}::this._readHassState]: canRead : ${stateEntry} - configEntry: ${configEntry}`, this.hass)
-    if(stateEntry) {
-      const value = this._get(this, ["hass","states",stateEntry])
+    if (stateEntry) {
+      const value = this._get(this, ["hass", "states", stateEntry])
       // console.log(`[${CARD_NAME}::this._readHassState]: read value : ${debug(value)}`, this.hass)
       return value
     }
     return undefined
-  }   
+  }
 
   protected render(): TemplateResult {
     if (!this.hass || !this._config) {
@@ -530,7 +535,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     const currentFanMode = this._lower(fanStateObj?.attributes?.preset_mode) in fanModeIcons ? fanStateObj?.attributes?.preset_mode : "unknown-fan-mode" as string;
     const currentHumidityString = this.hass.states[this._config.humidity_entity].state;
     const currentPowerStatus = stateObj.state
-    const isPoweredOff  = !!(currentPowerStatus === "off")
+    const isPoweredOff = !!(currentPowerStatus === "off")
     const currentTemperatureString = this.hass.states[this._config.temperature_entity].state;
     const currentTemperature = parseFloat(currentTemperatureString) as number;
     const unitOfMeasurement = this.hass.states[this._config.temperature_entity].attributes?.unit_of_measurement ?? '°C';
@@ -552,7 +557,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
 
     const targetHumidity =
       stateObj.attributes.humidity !== null &&
-      Number.isFinite(Number(stateObj.attributes.humidity))
+        Number.isFinite(Number(stateObj.attributes.humidity))
         ? stateObj.attributes.humidity
         : stateObj.attributes.min_humidity;
 
@@ -577,7 +582,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             @value-changing=${this._dragEvent}
             @value-changed=${this._setTargetHumidity}>
           </round-slider>
-        `;   
+        `;
 
     const targetHumiditySvg = svg`
       <svg viewBox="0 0 40 20">
@@ -589,32 +594,31 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
           style="font-size: 13px;"
         >
           ${this._targetHumidity && !isNaN(this._targetHumidity) ?
-            svg`${swapTargetAndCurrent ? html`${this._currentHumidity?.toFixed()}` : html`${this._targetHumidity.toFixed()}`}
+        svg`${swapTargetAndCurrent ? html`${this._currentHumidity?.toFixed()}` : html`${this._targetHumidity.toFixed()}`}
               <tspan dx="-3" dy="-6.5" style="font-size: 4px;">
                 %
               </tspan>
               `
-            :
-            ""
-          }
+        :
+        ""
+      }
         </text>
       </svg>
     `;
-    
 
-  const setValues = svg`
+
+    const setValues = svg`
     <svg id="set-values">
       <g>
         <text text-anchor="middle" class="set-value">
-        ${
-            UNAVAILABLE_STATES.includes(currentHumidityString) ||
-            this._currentHumidity === undefined ||
-            this._currentHumidity === null
-              ? ""
-              : svg`
+        ${UNAVAILABLE_STATES.includes(currentHumidityString) ||
+        this._currentHumidity === undefined ||
+        this._currentHumidity === null
+        ? ""
+        : svg`
                     ${swapTargetAndCurrent ? this._targetHumidity?.toFixed() : this._currentHumidity.toFixed()}% - ${currentTemperatureString ? currentTemperature : ""}${unitOfMeasurement}
                     `
-          }
+      }
         </text>
         <text
             dy="22"
@@ -622,30 +626,29 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             id="set-mode"
           >
             ${this.hass!.localize(`state.default.${stateObj.state}`)}
-            ${
-              stateObj.attributes.mode &&
-              !UNAVAILABLE_STATES.includes(stateObj.state)
-                ? html`
+            ${stateObj.attributes.mode &&
+        !UNAVAILABLE_STATES.includes(stateObj.state)
+        ? html`
                     -
                     ${this.hass!.localize(
-                      `state_attributes.humidifier.mode.${stateObj.attributes.mode}`
-                    ) || stateObj.attributes.mode}
+          `state_attributes.humidifier.mode.${stateObj.attributes.mode}`
+        ) || stateObj.attributes.mode}
                   `
-                : ""
-            }
+        : ""
+      }
           </text>
       </g>
     </svg>
     `;
 
-  const problems = {
-    tank: (tankStateObj?.state === 'on'),
-    defrost: (defrostStateObj?.state === 'on'), // not sure how to report this
-    filter: (filterStateObj?.state === 'on')
-  }
+    const problems = {
+      tank: (tankStateObj?.state === 'on'),
+      defrost: (defrostStateObj?.state === 'on'), // not sure how to report this
+      filter: (filterStateObj?.state === 'on')
+    }
 
-  const hasIssues : boolean = ((tankStateObj?.state === 'on')||(defrostStateObj?.state === 'on')||(filterStateObj?.state === 'on')) || false
-  
+    const hasIssues: boolean = ((tankStateObj?.state === 'on') || (defrostStateObj?.state === 'on') || (filterStateObj?.state === 'on')) || false
+
     return html`
       <ha-card
         class=${classMap({
@@ -671,12 +674,12 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
           <div id="info" .title=${name}>
             <div id="modes">
               ${(stateObj.attributes.available_modes || [])
-                .concat()
-                .sort(compareClimateHumidifierModes)
-                .map((modeItem) => this._renderIcon(modeItem, currentMode, isPoweredOff))}
-              ${problems?.defrost 
-                ? html`<ha-icon-button
-                  class=${classMap({ "defrost-icon": (problems!.defrost&& !isPoweredOff) })}
+        .concat()
+        .sort(compareClimateHumidifierModes)
+        .map((modeItem) => this._renderIcon(modeItem, currentMode, isPoweredOff))}
+              ${problems?.defrost
+        ? html`<ha-icon-button
+                  class=${classMap({ "defrost-icon": (problems!.defrost && !isPoweredOff) })}
                   tabindex="0"                  
                   .path=${mdiSnowflakeMelt}
                   .label=${"Defrost"}                
@@ -684,17 +687,17 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
             </div>
             <div id="modes">
               ${(this._config?.show_ion_toggle === true)
-                ? html`<ha-icon-button
-                  class=${classMap({ "ion-icon": (ionStateObj!.state === 'on'&& !isPoweredOff) })}
+        ? html`<ha-icon-button
+                  class=${classMap({ "ion-icon": (ionStateObj!.state === 'on' && !isPoweredOff) })}
                   tabindex="0"  
                   @click=${this._handleToggleIonModeAction}                
                   .path=${(ionStateObj!.state === 'on') ? mdiAirPurifier : mdiAirHumidifierOff}
                   .label=${"Ion"}                
                   ></ha-icon-button>` : html``}                
               ${(fanStateObj?.attributes?.preset_modes || [])
-                .concat()
-                .sort(compareClimateFanHumidifierModes)
-                .map((modeItem) => this._renderFanIcon(modeItem, currentFanMode, isPoweredOff))}
+        .concat()
+        .sort(compareClimateFanHumidifierModes)
+        .map((modeItem) => this._renderFanIcon(modeItem, currentFanMode, isPoweredOff))}
               ${this._renderPowerIcon(currentPowerStatus === 'off' ? "on" : "off", currentPowerStatus)}             
             </div>          
             ${name}
@@ -713,7 +716,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
 
   protected updated(changedProps: PropertyValues): void {
     super.updated(changedProps);
-    
+
 
     if (
       !this._config ||
@@ -737,7 +740,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     ) {
       applyThemesOnElement(this, this.hass.themes, this._config.theme);
     }
-    
+
 
     const stateObj = this.hass.states[this._config.entity];
     if (!stateObj) {
@@ -767,7 +770,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     const humidityStateObj = this.hass.states[this._config.humidity_entity];
     if (!humidityStateObj) {
       return;
-    }    
+    }
 
     const oldHass = changedProps.get("hass") as HomeAssistant | undefined;
 
@@ -777,7 +780,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
 
     if (!oldHass || oldHass.states[this._config.humidity_entity] !== stateObj) {
       this._currentHumidity = this._getCurrentHumidity(humidityStateObj);
-    }    
+    }
   }
 
 
@@ -804,10 +807,10 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         svgRoot!.setAttribute("height", `${box!.height}`);
       });
     }
-  }  
+  }
 
   private _getTargetHumidity(stateObj: HassEntity): undefined | number {
-    
+
     if (UNAVAILABLE_STATES.includes(stateObj.state)) {
       //// console.warn(`[${CARD_NAME}::_getTargetHumidity]: returning undefined ${stateObj.state}`)
       return undefined;
@@ -816,7 +819,7 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
     return stateObj.attributes.humidity;
   }
 
-  private _dragEvent(e): void {    
+  private _dragEvent(e): void {
     this._targetHumidity = e.detail.value;
     //// console.warn(`[${CARD_NAME}::_dragEvent]: returning ${this._targetHumidity}`)
   }
@@ -986,12 +989,6 @@ export class MideaHumidifierCard extends LitElement implements LovelaceCard {
         fill: var(--primary-text-color);
       }
     `;
-  }
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    [CARD_NAME]: MideaHumidifierCard;
   }
 }
 

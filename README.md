@@ -8,6 +8,10 @@ humidifier card was kinda lacking alot, so i made this card specifically for tha
 
 ## Changelogs
 
+*v1.0.9* - Fixed a missing import breaking the UI 
+
+*v1.0.8* - Fixed a erroneous mention in the card editor and added a new method of installation through HACS custom repository
+
 *v1.0.7* - Latest current version - Fixed fan mode name change in homeassistant-midea-air-appliances-lan v0.6.0
 
 *v1.0.6* - Updated readme.md
